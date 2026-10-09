@@ -1,0 +1,5 @@
+node_modules/
+dist/
+.vercel/
+.DS_Store
+demo1/preview/index.local.html
