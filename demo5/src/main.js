@@ -9,6 +9,8 @@ const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
 const A = './a/';
 const isTouch = matchMedia('(pointer: coarse)').matches;
 if (isTouch) document.body.classList.add('touch');
+const NOFX = new URLSearchParams(location.search).has('nofx'); // tắt filter Phaser 4 để so FPS
+const hex = (c) => parseInt(c.slice(1), 16);
 
 let MAP, TW, TH, ICONS;
 const iso = (mx, my) => ({ x: (mx - my) * TW / 2, y: (mx + my) * TH / 2 });
@@ -137,11 +139,13 @@ class Game extends Phaser.Scene {
     this.ST = stats(); S.hp = this.ST.maxHp; S.mp = this.ST.maxMp;
     this.ents = []; this.enemies = []; this.loot = []; this.fxs = []; this.shots = []; this.timers = []; this.lamps = [];
     this.now = 0; this.cd = { q: 0, w: 0, e: 0, r: 0 }; this.shake = 0;
+    this.setupLights();
     this.buildMap();
     this.spawnHero();
     this.spawnEnemies();
     this.spawnNpc();
     this.dark = null; this.onResize();
+    this.setupFx();
     { const hp = iso(this.hero.x, this.hero.y), cam = this.cameras.main; cam.scrollX = hp.x - cam.width / 2; cam.scrollY = hp.y - 60 - cam.height / 2; }
     this.scale.on('resize', () => this.onResize());
     this.setupInput();
@@ -168,9 +172,12 @@ class Game extends Phaser.Scene {
     for (let j = 0; j < H; j++) for (let i = 0; i < W; i++) {
       const p = iso(i + 0.5, j + 0.5);
       const b = MAP.bg[j * W + i];
-      if (b && MAP.tiles[b]) { const f = MAP.tiles[b]; this.add.image(p.x, p.y, 'tiles', 't' + b).setOrigin(f[4] / f[2], f[5] / f[3]).setDepth(-1e6 + i + j); }
+      if (b && MAP.tiles[b]) { const f = MAP.tiles[b]; this.lit(this.add.image(p.x, p.y, 'tiles', 't' + b).setOrigin(f[4] / f[2], f[5] / f[3]).setDepth(-1e6 + i + j)); }
       const o = MAP.obj[j * W + i];
-      if (o && MAP.tiles[o]) { const f = MAP.tiles[o]; this.objImgs[j * W + i] = this.add.image(p.x, p.y, 'tiles', 't' + o).setOrigin(f[4] / f[2], f[5] / f[3]).setDepth((i + j + 1) * 10); }
+      if (o && MAP.tiles[o]) { const f = MAP.tiles[o]; this.objImgs[j * W + i] = this.lit(this.add.image(p.x, p.y, 'tiles', 't' + o).setOrigin(f[4] / f[2], f[5] / f[3]).setDepth((i + j + 1) * 10)); }
+      // đuốc tường (tile 102/103, ngọn lửa cách gốc tile ±5, -119 px) và chậu than (151)
+      if (o === 102 || o === 103) this.addTorch(p.x + (o === 102 ? 5 : -5), p.y - 119, 0xff9a40, 300, 1.4);
+      else if (o === 151) this.addTorch(p.x, p.y - 20, 0xff5a20, 240, 1.1);
     }
     this.chests = MAP.chests.map((c) => ({ ...c, img: this.objImgs[c.y * W + c.x], opened: false }));
   }
@@ -193,8 +200,8 @@ class Game extends Phaser.Scene {
   spawnHero() {
     const [hx, hy] = MAP.hero;
     const h = { x: hx + 0.5, y: hy + 0.5, dir: 7, anim: 'stance', t: 0, imgs: {}, state: 'idle', path: null, target: null };
-    for (const s of SLOTS) h.imgs[s] = this.add.image(0, 0, '__DEFAULT').setVisible(false);
-    this.shadow = this.add.image(0, 0, 'glow').setTint(0x000000).setAlpha(0.55).setScale(0.75, 0.35);
+    for (const s of SLOTS) h.imgs[s] = this.lit(this.add.image(0, 0, '__DEFAULT').setVisible(false), true);
+    this.shadow = this.lit(this.add.image(0, 0, 'glow').setTint(0x000000).setAlpha(0.55).setScale(0.75, 0.35));
     this.hero = h;
   }
   heroKey(slot) { return S.eq[slot]?.layer || DEFAULT_LAYER[slot] || null; }
@@ -225,9 +232,9 @@ class Game extends Phaser.Scene {
   makeUnit(type, x, y, o = {}) {
     const d = EN[type];
     const u = { type, d, x, y, dir: rint(0, 7), anim: 'stance', t: rnd() * 1000, hp: Math.round(d.hp * (o.mul || 1)), max: Math.round(d.hp * (o.mul || 1)), alive: true, state: 'idle', home: { x, y }, atkReady: 0, path: null, repath: 0, lvl: o.lvl || 2 };
-    u.img = this.add.image(0, 0, type).setVisible(false);
+    u.img = this.lit(this.add.image(0, 0, type).setVisible(false), true);
     if (d.boss) u.img.setScale(1.0);
-    u.shadow = this.add.image(0, 0, 'glow').setTint(0x000000).setAlpha(0.5).setScale(d.boss ? 1.4 : 0.7, d.boss ? 0.6 : 0.32);
+    u.shadow = this.lit(this.add.image(0, 0, 'glow').setTint(0x000000).setAlpha(0.5).setScale(d.boss ? 1.4 : 0.7, d.boss ? 0.6 : 0.32));
     this.enemies.push(u);
     return u;
   }
@@ -245,12 +252,13 @@ class Game extends Phaser.Scene {
   spawnBoss() {
     const b = this.makeUnit('minotaur', 11.5, 5.5, { lvl: 5 });
     b.dir = 6;
+    this.glow(b.img, 0xff3020, 2);
     this.boss = b;
   }
   spawnNpc() {
     let x = MAP.hero[0] - 1.5, y = MAP.hero[1] - 1.5;
     if (!walk(x, y)) { x = MAP.hero[0] + 0.5; y = MAP.hero[1] - 1.5; }
-    const n = { x, y, dir: 7, t: 0, img: this.add.image(0, 0, 'knight') };
+    const n = { x, y, dir: 7, t: 0, img: this.lit(this.add.image(0, 0, 'knight'), true) };
     this.npc = n;
     this.npcLabel = this.add.text(0, 0, '!', { fontFamily: 'Cormorant Garamond', fontStyle: '700', fontSize: '40px', color: '#f0d898', stroke: '#000', strokeThickness: 5 }).setOrigin(0.5, 1).setDepth(1e6);
   }
@@ -404,6 +412,7 @@ class Game extends Phaser.Scene {
     const s = { owner, kind, x: from.x + dx / l * 0.5, y: from.y + dy / l * 0.5, vx: dx / l * sp, vy: dy / l * sp, dmg, life: 1.6, dir: dirOf(dx, dy), t: 0 };
     if (kind === 'arrow') { const a = iso(dx, dy); s.img = this.add.image(0, 0, 'arrow').setRotation(Math.atan2(a.y, a.x)); }
     else { s.img = this.add.image(0, 0, 'powers').setBlendMode(kind === 'fireball' ? 'ADD' : 'NORMAL'); }
+    if (this.LT && kind !== 'arrow') s.light = this.lights.addLight(0, 0, kind === 'fireball' ? 220 : 170, kind === 'fireball' ? 0xff7a30 : 0x6aa8ff, 1.6, 90);
     this.shots.push(s);
   }
   updateShots(dt) {
@@ -413,6 +422,7 @@ class Game extends Phaser.Scene {
       const p = iso(s.x, s.y);
       if (s.kind === 'arrow') s.img.setPosition(p.x, p.y - 60).setDepth((s.x + s.y) * 10 + 2);
       else { setFrame(s.img, 'powers', s.kind + ':power', s.dir, s.t); s.img.setPosition(p.x, p.y - 20).setDepth((s.x + s.y) * 10 + 2); }
+      if (s.light) { s.light.x = p.x; s.light.y = p.y - 30; }
       if (s.kind === 'fireball') this.lamps.push({ x: p.x, y: p.y - 50, s: 0.5, c: 0xff8a30, once: true });
       let hit = null;
       if (s.owner === 'hero') hit = this.enemies.find((u) => u.alive && u.state !== 'dormant' && Math.hypot(u.x - s.x, u.y - s.y) < (u.d.boss ? 1.1 : 0.6));
@@ -424,6 +434,7 @@ class Game extends Phaser.Scene {
           for (const u of this.enemies) if (u.alive && u.state !== 'dormant' && Math.hypot(u.x - s.x, u.y - s.y) < 1.4) this.hitEnemy(u, u === hit ? s.dmg : Math.round(s.dmg * 0.5), { fire: true });
         } else if (s.kind === 'icicle') this.power('freeze:power', s.x, s.y, 0, { add: true, scale: 0.7 });
         if (hit === this.hero) this.hurtHero(s.dmg);
+        if (s.light) this.lights.removeLight(s.light);
         s.img.destroy(); this.shots.splice(i, 1);
       }
     }
@@ -437,7 +448,7 @@ class Game extends Phaser.Scene {
     if (u.state === 'dormant' || u.state === 'idle') u.state = 'chase';
     this.float(u.x, u.y, crit ? `${d}!` : `${d}`, crit ? '#f0d898' : o.fire ? '#ff9a4a' : '#ffffff', crit);
     this.power('spark_red:power', u.x, u.y, 0, { add: true, scale: 0.6, dy: -50 });
-    u.img.setTintFill(0xffffff); this.after(0.06, () => u.img.active && u.img.clearTint());
+    u.img.setTint(0xffffff).setTintMode(Phaser.TintModes.FILL); this.after(0.06, () => u.img.active && u.img.clearTint());
     if (ST.ls) S.hp = Math.min(ST.maxHp, S.hp + Math.max(1, Math.round(d * ST.ls / 100)));
     if (crit) this.shake = Math.max(this.shake, 0.25);
     if (o.stun) u.stun = this.now + o.stun;
@@ -463,12 +474,13 @@ class Game extends Phaser.Scene {
     d = Math.max(1, Math.round(d * (1 - Math.min(0.65, this.ST.armor / (this.ST.armor + 60)))));
     S.hp -= d;
     this.float(h.x, h.y, `-${d}`, '#ff6a5a');
-    this.cameras.main.flash(80, 120, 0, 0, false);
+    if (this.fx) this.fx.hurt = 1; else this.cameras.main.flash(80, 120, 0, 0, false);
     this.shake = Math.max(this.shake, 0.18);
     if (S.hp <= 0) {
       S.hp = 0; h.state = 'dead'; this.heroAnim('die', true); h.path = null;
       UI.banner('Bạn đã chết', 'Hồi sinh sau 3 giây');
-      this.after(3, () => { S.hp = this.ST.maxHp; S.mp = this.ST.maxMp; S.gold = Math.floor(S.gold * 0.8); h.x = MAP.hero[0] + 0.5; h.y = MAP.hero[1] + 0.5; h.state = 'idle'; this.heroAnim('stance', true); h.inv = this.now + 2; });
+      this.grayTo(1, 900);
+      this.after(3, () => { this.grayTo(0, 400); S.hp = this.ST.maxHp; S.mp = this.ST.maxMp; S.gold = Math.floor(S.gold * 0.8); h.x = MAP.hero[0] + 0.5; h.y = MAP.hero[1] + 0.5; h.state = 'idle'; this.heroAnim('stance', true); h.inv = this.now + 2; });
     } else if (!this.busy() && rnd() < 0.35) this.heroAnim('hit', true);
     UI.vitals();
   }
@@ -493,9 +505,10 @@ class Game extends Phaser.Scene {
   }
   dropItem(it, x, y) {
     const [lx, ly] = this.spot(x, y);
-    const o = { it, x: lx, y: ly, t: 0, ready: false, img: this.add.image(0, 0, 'loot') };
+    const o = { it, x: lx, y: ly, t: 0, ready: false, img: this.lit(this.add.image(0, 0, 'loot')) };
     const R = RAR[it.rarity];
     o.label = this.add.text(0, 0, it.name, { fontFamily: 'Be Vietnam Pro', fontSize: '13px', color: R.c, backgroundColor: 'rgba(0,0,0,.72)', padding: { x: 5, y: 2 } }).setOrigin(0.5, 1).setDepth(1e6).setVisible(false).setResolution(Math.min(2, devicePixelRatio || 1));
+    if (it.rarity >= 2) this.glow(o.img, hex(R.c), it.rarity === 3 ? 4 : 2.5);
     if (it.rarity === 3) { UI.toast(`Rơi đồ độc nhất: ${it.name}`, R.c); this.shake = 0.3; }
     this.loot.push(o);
   }
@@ -555,6 +568,39 @@ class Game extends Phaser.Scene {
   lightAt(x, y, s, ms, c) {
     const L = { x, y, s, c, until: this.now + ms / 1000 };
     this.lamps.push(L);
+    // chớp sáng có màu (v4): tắt dần theo thời gian
+    if (this.LT) this.flashes.push({ light: this.lights.addLight(x, y, 260 * s, c ?? 0xfff0d0, 2.2, 110), base: 2.2, t0: this.now, dur: ms / 1000 });
+  }
+
+  // ---------- lighting Phaser 4 ----------
+  setupLights() {
+    this.LT = !NOFX && !!this.renderer.gl;
+    this.torches = []; this.flashes = [];
+    if (!this.LT) return;
+    this.lights.enable().setAmbientColor(0x9ca0b4); // nền hơi lạnh, đuốc + đèn hero mới ra màu ấm
+    this.heroLight = this.lights.addLight(0, 0, 520, 0xffe0b0, 0.7, 160);
+  }
+  // bật lighting cho sprite thế giới; nhân vật thêm self-shadow (đổ bóng theo độ sáng texture, không cần normal map)
+  lit(img, actor) {
+    if (!this.LT) return img;
+    img.setLighting(true);
+    if (actor) img.setSelfShadow(true, 0.5, 1 / 3);
+    return img;
+  }
+  addTorch(x, y, color, radius, intensity) {
+    if (!this.LT) return;
+    this.torches.push({ light: this.lights.addLight(x, y, radius, color, intensity, 120), base: intensity, ph: rnd() * 10 });
+    this.lamps.push({ x, y, s: 0.28 }); // khoét lớp tối quanh đuốc để thấy từ xa
+  }
+  updateLights() {
+    if (!this.LT) return;
+    const t = this.now, hp = iso(this.hero.x, this.hero.y);
+    this.heroLight.x = hp.x; this.heroLight.y = hp.y - 60;
+    for (const o of this.torches) o.light.intensity = o.base * (1 + Math.sin(t * 9 + o.ph) * 0.08 + Math.sin(t * 23 + o.ph * 3) * 0.05);
+    for (let i = this.flashes.length - 1; i >= 0; i--) {
+      const f = this.flashes[i], k = (t - f.t0) / f.dur;
+      if (k >= 1) { this.lights.removeLight(f.light); this.flashes.splice(i, 1); } else f.light.intensity = f.base * (1 - k) * (1 - k);
+    }
   }
 
   // ---------- AI ----------
@@ -669,24 +715,52 @@ class Game extends Phaser.Scene {
     this.cameras.main.setZoom(z);
     if (this.dark) this.dark.destroy();
     this.dark = this.add.renderTexture(0, 0, Math.ceil(w / z) + 4, Math.ceil(hgt / z) + 4).setOrigin(0).setDepth(9e5);
-    this.lstamp = this.make.image({ key: 'light', add: false });
   }
   updateLight() {
     const cam = this.cameras.main, wv = cam.worldView, dk = this.dark;
     dk.setPosition(wv.x - 2, wv.y - 2);
     dk.clear();
     dk.fill(0x000000, 0.94);
+    // v4: lệnh vẽ được dồn tới render(); stamp giữ vị trí theo giá trị (erase(obj) chỉ giữ tham chiếu)
+    const cut = (x, y, scale) => dk.stamp('light', null, x - wv.x + 2, y - wv.y + 2, { scale, blendMode: Phaser.BlendModes.ERASE });
     const hp = iso(this.hero.x, this.hero.y);
     const R = Math.max(wv.width, wv.height) / 512 * 0.95;
     const flick = 1 + Math.sin(this.now * 7) * 0.012 + Math.sin(this.now * 17) * 0.008;
-    const st = this.lstamp;
-    st.setPosition(hp.x - wv.x + 2, hp.y - 40 - wv.y + 2).setScale(R * flick); dk.erase(st);
-    st.setScale(R * 0.55); dk.erase(st);
+    cut(hp.x, hp.y - 40, R * flick);
+    cut(hp.x, hp.y - 40, R * 0.55);
     for (let i = this.lamps.length - 1; i >= 0; i--) {
       const L = this.lamps[i];
-      st.setPosition(L.x - wv.x + 2, L.y - wv.y + 2).setScale(L.s * 2); dk.erase(st);
+      cut(L.x, L.y, L.s * 2);
       if (L.once || (L.until && this.now > L.until)) this.lamps.splice(i, 1);
     }
+    dk.render();
+  }
+
+  // ---------- filters Phaser 4 ----------
+  setupFx() {
+    if (NOFX || !this.renderer.gl) return; // filter chỉ có trên WebGL
+    const cam = this.cameras.main;
+    Phaser.Actions.AddEffectBloom(cam, { useInternal: true, threshold: 0.6, blurRadius: 2, blendAmount: 0.7 });
+    const cm = cam.filters.internal.addColorMatrix().setActive(false);
+    // Vignette v4 trộn theo sin(g·π·strength), ngoài radius là phủ kín màu -> radius phải trùm góc màn (0.71)
+    const vig = cam.filters.external.addVignette(0.5, 0.5, 0.75, 0, 0x8a0000).setActive(false);
+    this.fx = { cm, vig, gray: { v: 0 }, hurt: 0 };
+  }
+  glow(img, color, strength) { if (this.fx) img.enableFilters().filters.internal.addGlow(color, strength, 0, 1); }
+  grayTo(v, ms) {
+    const f = this.fx;
+    if (!f) return;
+    this.tweens.killTweensOf(f.gray);
+    this.tweens.add({ targets: f.gray, v, duration: ms, onUpdate: () => { f.cm.colorMatrix.grayscale(f.gray.v); f.cm.setActive(f.gray.v > 0.01); }, onComplete: () => f.cm.setActive(f.gray.v > 0.01) });
+  }
+  updateFilters(dt) {
+    const f = this.fx;
+    if (!f) return;
+    f.hurt = Math.max(0, f.hurt - dt * 3);
+    const low = S.hp > 0 && S.hp < this.ST.maxHp * 0.3 ? 0.07 + Math.sin(this.now * 5) * 0.03 : 0;
+    const s = Math.max(low, f.hurt * 0.16);
+    f.vig.strength = s;
+    f.vig.setActive(s > 0.005);
   }
 
   update(time, delta) {
@@ -709,6 +783,8 @@ class Game extends Phaser.Scene {
     cam.scrollY += (ty - cam.scrollY) * Math.min(1, dt * 8);
     if (this.shake > 0) { cam.scrollX += (rnd() - 0.5) * this.shake * 14; cam.scrollY += (rnd() - 0.5) * this.shake * 14; this.shake = Math.max(0, this.shake - dt * 1.8); }
     this.updateLight();
+    this.updateLights();
+    this.updateFilters(dt);
     if ((this.uiT = (this.uiT || 0) + dt) > 0.15) {
       this.uiT = 0; UI.vitals(); UI.cooldowns();
       const tg = UI.tgt; if (tg && (!tg.alive || Math.hypot(tg.x - this.hero.x, tg.y - this.hero.y) > 11)) UI.target(null);
@@ -857,7 +933,7 @@ fontsReady.then(() => {
   new Phaser.Game({
     type: Phaser.AUTO, parent: 'app', backgroundColor: '#050405',
     scale: { mode: Phaser.Scale.RESIZE, width: innerWidth, height: innerHeight },
-    render: { antialias: true, roundPixels: false, powerPreference: 'high-performance' },
+    render: { antialias: true, roundPixels: false, powerPreference: 'high-performance', maxLights: 16 },
     scene: [Game],
   });
 });

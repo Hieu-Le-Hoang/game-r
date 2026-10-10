@@ -9,7 +9,7 @@
     "preview": "vite preview --host"
   },
   "dependencies": {
-    "phaser": "3.90.0"
+    "phaser": "4.2.1"
   },
   "devDependencies": {
     "vite": "5.4.10"

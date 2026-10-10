@@ -10,7 +10,7 @@ Sandbox build cùng một vertical slice ARPG (hầm ngục -> sảnh -> boss) q
 | [demo2](demo2/) | Hầm Mộ Vua Xương | ARPG 3D | Three.js | KayKit (CC0) | Xong | [wcg-game-r-demo2.vercel.app](https://wcg-game-r-demo2.vercel.app/) |
 | [demo3](demo3/) | Ngai Quỷ Vương | ARPG 3D, đổi art từ demo2 | Three.js | Quaternius (CC0) | Xong | [wcg-game-r-demo3.vercel.app](https://wcg-game-r-demo3.vercel.app/) |
 | [demo4](demo4/) | Ngai Quỷ Vương | Dark fantasy kiểu Diablo 4 | Three.js + N8AO | Poly Haven PBR + Quaternius (Mixamo dự kiến) | Phase A xong, Phase B chờ Mixamo | [wcg-game-r-demo4.vercel.app](https://wcg-game-r-demo4.vercel.app/) |
-| [demo5](demo5/) | Hầm Mộ Ardwen | ARPG isometric 2D | Phaser 3 (npm) | Flare (CC-BY-SA 3.0) | Xong | [wcg-game-r-demo5.vercel.app](https://wcg-game-r-demo5.vercel.app/) |
+| [demo5](demo5/) | Hầm Mộ Ardwen | ARPG isometric 2D | Phaser 4 (npm) | Flare (CC-BY-SA 3.0) | Xong | [wcg-game-r-demo5.vercel.app](https://wcg-game-r-demo5.vercel.app/) |
 | [demo6](demo6/) | Ngai Ma Nữ | Anime kiểu Genshin | Three.js + three-vrm | VRoid + Quaternius UAL | Đang làm | [wcg-game-r-demo6.vercel.app](https://wcg-game-r-demo6.vercel.app/) |
 
 Deploy: Vercel team `wecare2`, project `wcg-game-r-demoN`. demo2–6 chạy `vercel deploy --prod` trong folder demo (Vercel tự build Vite). demo1 deploy riêng: bọc `demo1/preview/index.html` vào skeleton HTML rồi deploy như static.
@@ -49,7 +49,7 @@ Version lấy theo `package.json` (demo1: link CDN). Chi tiết nguồn art và 
 - **Art:** Poly Haven, gồm 26 props và 7 bộ texture PBR (CC0). Nhân vật và quái tạm dùng Quaternius (CC0), phase B dự kiến thay bằng Mixamo.
 
 ### demo5 — Hầm Mộ Ardwen
-- **Engine:** Phaser 3.90.0 cài qua npm · Vite 5.4.10.
+- **Engine:** Phaser 4.2.1 cài qua npm (nâng từ 3.90.0 ngày 2026-10-10) · Vite 5.4.10. Filter v4: bloom, glow loot hiếm/boss, vignette đỏ khi trúng đòn, grayscale khi chết; thêm `?nofx` để tắt filter khi so FPS.
 - **Art:** Flare: Empyrean Campaign (CC-BY-SA 3.0), sprite isometric 2D. Đã cắt bớt animation, scale 0.75 và đóng atlas WebP.
 
 ### demo6 — Ngai Ma Nữ
@@ -62,7 +62,7 @@ Repo chỉ dùng engine **web-native**: viết bằng JS/TS, browser chạy th�
 
 | Engine | Loại | Vị thế 2026 | Repo |
 |---|---|---|---|
-| **Phaser 4** | Framework 2D | Mặc định cho 2D web. v4.0 "Caladan" ra 10/4/2026 với renderer WebGL viết lại, filters, lighting; bản mới nhất 4.2.1 (7/2026) | Chưa dùng (demo1, demo5 đang ở 3.90) |
+| **Phaser 4** | Framework 2D | Mặc định cho 2D web. v4.0 "Caladan" ra 10/4/2026 với renderer WebGL viết lại, filters, lighting; bản mới nhất 4.2.1 (7/2026) | demo5 (4.2.1); demo1 vẫn ở 3.90 |
 | **PixiJS v8** | Renderer 2D | Renderer 2D nhanh nhất, ưu tiên WebGPU, nhưng không phải game framework | Chưa dùng |
 | **Three.js** | Library 3D | Phổ biến nhất cho 3D web, AI tool hiểu rõ nhất. Có WebGPURenderer + TSL | demo2/3/4/6 |
 | **Babylon.js** | Engine 3D trọn bộ | Có sẵn physics (Havok), GUI, inspector, WebXR. Game tiêu biểu: Shell Shockers | Chưa dùng |

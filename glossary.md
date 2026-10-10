@@ -42,7 +42,7 @@ Mỗi game đi qua cùng 1 pipeline: **lấy asset -> tối ưu bằng tool -> l
 | demo2 | ARPG "Hầm Mộ Vua Xương" | 3D | Three.js | KayKit |
 | demo3 | Cùng game, đổi art | 3D | Three.js | Quaternius |
 | demo4 | Dark fantasy kiểu Diablo 4 | 3D | Three.js + N8AO | Poly Haven (PBR) + Quaternius, Mixamo (dự kiến) |
-| demo5 | ARPG isometric "Hầm Mộ Ardwen" | 2D | Phaser 3 (npm) | Flare |
+| demo5 | ARPG isometric "Hầm Mộ Ardwen" | 2D | Phaser 4 (npm) | Flare |
 | demo6 | Anime kiểu Genshin | 3D | Three.js + three-vrm | VRoid + Quaternius UAL |
 
 ---
