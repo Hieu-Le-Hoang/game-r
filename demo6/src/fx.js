@@ -21,7 +21,7 @@ attribute float size; attribute vec4 col; varying vec4 vCol; uniform float uScal
 void main() { vCol = col; vec4 mv = modelViewMatrix * vec4(position, 1.0); gl_PointSize = size * uScale / -mv.z; gl_Position = projectionMatrix * mv; }`;
 const FRAG = `
 varying vec4 vCol; uniform float uSoft;
-void main() { vec2 c = gl_PointCoord - 0.5; float d = length(c); if (d > 0.5) discard; float a = pow(1.0 - d * 2.0, uSoft); gl_FragColor = vec4(vCol.rgb, a * vCol.a); }`;
+void main() { vec2 c = gl_PointCoord - 0.5; float d = length(c); if (d > 0.5) discard; float a = pow(max(1.0 - d * 2.0, 0.0), uSoft); gl_FragColor = vec4(vCol.rgb, a * vCol.a); }`;
 
 export class Particles {
   constructor(scene, cap, additive) {
@@ -93,7 +93,7 @@ const beamMat = (color) => new THREE.ShaderMaterial({
   transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, side: THREE.DoubleSide,
   uniforms: { uColor: { value: new THREE.Color(color) }, uA: { value: 1 } },
   vertexShader: 'varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0); }',
-  fragmentShader: 'varying vec2 vUv; uniform vec3 uColor; uniform float uA; void main(){ float a = pow(1.0 - vUv.y, 1.6) * uA; gl_FragColor = vec4(uColor * 1.6, a); }',
+  fragmentShader: 'varying vec2 vUv; uniform vec3 uColor; uniform float uA; void main(){ float a = pow(clamp(1.0 - vUv.y, 0.0, 1.0), 1.6) * uA; gl_FragColor = vec4(uColor * 1.6, a); }',
 });
 
 export function lootBeam(color, rarity) {
