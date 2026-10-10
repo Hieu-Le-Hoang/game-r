@@ -1,0 +1,20 @@
+{
+  "name": "game-r-demo6",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host",
+    "build": "vite build",
+    "preview": "vite preview --host",
+    "assets": "node tools/build-assets.mjs"
+  },
+  "dependencies": {
+    "@pixiv/three-vrm": "^3.5.5",
+    "three": "0.169.0"
+  },
+  "devDependencies": {
+    "sharp": "0.33.5",
+    "vite": "5.4.10"
+  }
+}

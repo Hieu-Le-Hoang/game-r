@@ -3,3 +3,6 @@ dist/
 .vercel/
 .DS_Store
 demo1/preview/index.local.html
+_inbox/
+.env*
+.playwright-cli/
