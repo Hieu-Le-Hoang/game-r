@@ -1,3 +1,56 @@
+# demo8 — ARPG 3D trên Godot 4 + Godot MCP (2026-10-12) · XONG, CHỜ ANH TEST TAY
+
+Anh duyệt "làm full". Bối cảnh: demo7 là bản Unity anh làm ở máy local; demo8 làm trên VM này (Ubuntu 24.04, 4 vCPU, 15GB RAM, không GPU, không display).
+
+Mục tiêu:
+- Thử cho AI lái Godot qua MCP trên VM headless, tự làm trọn vòng: dựng scene, chạy, đọc lỗi, export web, deploy.
+- Làm full slice như demo2 (Quán Rượu -> Đại Sảnh Xương Khô -> Hầm Mộ Vua Xương), 3 class, loot 4 độ hiếm, rồi so A/B với demo2 (Three.js) và demo7 (Unity).
+
+## 0. Cài đặt + spike MCP
+- [x] Godot 4.7.2-stable Linux x86_64 -> `/opt/godot/`, symlink `~/.local/bin/godot` (đã kiểm SHA512)
+- [x] Export templates 4.7.2: chỉ giải nén 8 file `web*` (~85MB) từ gói 1.2GB -> `~/.local/share/godot/export_templates/4.7.2.stable/`
+- [x] Thử 2 MCP, chọn **koltyakov/godot-mcp** (`/opt/godot-mcp/koltyakov`, đăng ký scope local). Coding-Solo bị loại vì `run_project` cần màn hình
+- [x] Spike: tạo project, scene, script lỗi -> `run_project_diagnostics` bắt được lỗi kèm file + dòng
+
+## 1. Khung demo8
+- [x] Renderer Compatibility, autoload `Assets` + `S`, project settings (qua MCP)
+- [x] `assets/models/`: sinh từ demo2 bằng `tools/build-assets.mjs` (giải nén meshopt cho model nhân vật). Font Be Vietnam Pro + Baloo 2 (OFL) vì bản Web không có font hệ thống
+- [x] `.gitignore`, README, CREDITS; README gốc thêm demo8 + sửa đoạn "chỉ web-native"
+
+## 2. Gameplay (port `demo2/src` -> ~3.000 dòng GDScript, gồm cả UI dựng bằng Control)
+- [x] Map 3 khu, camera, 3 hero đổi 1/2/3, đánh, kỹ năng, lăn né, bình máu, click-to-move
+- [x] 4 loại quái + boss: ngủ dưới sàn / trồi dậy, đuổi, đánh, bắn phép, vùng cảnh báo của boss. Giữ va chạm lưới + hình tròn như demo2 (không dùng NavigationAgent3D) để so A/B công bằng
+- [x] Loot 4 độ hiếm + affix, rương, vàng, lên cấp, túi đồ, quest Lyra, Brann nói chuyện phiếm, minimap, icon 3D chụp bằng SubViewport
+- [x] Fx: CPUParticles3D, shader vòng sóng / vệt chém / vùng cảnh báo / cột loot, glow của WorldEnvironment, hit flash bằng `material_overlay`, hitstop bằng `Engine.time_scale`
+
+## 3. Verify
+- [x] `DEMO8_SELFTEST=1`: tự chơi 21 bước từ quán tới boss -> **PASS**, chạy qua MCP `run_project_diagnostics`, không còn leak
+- [x] `DEMO8_SHOT`: chụp 7 cảnh bằng render CPU (Xvfb + llvmpipe, không dùng browser), soát bằng mắt rồi sửa 6 lỗi hình
+- [x] Export Web qua MCP `export_project`
+- [ ] Anh chơi thử trên link (em không mở Playwright/Chrome)
+- [ ] Đo FPS trên máy thật, so với demo2
+
+## 4. Deploy
+- [x] Vercel `wcg-game-r-demo8` -> https://wcg-game-r-demo8.vercel.app (curl: index/pck/wasm 200, wasm + pck nén brotli). Export không thread nên không cần header COOP/COEP
+
+## Review
+- **MCP làm được:** dựng project, autoload, settings, Environment, scene, soi cấu trúc model, chạy headless, export. Vòng sửa lỗi chính là `run_project_diagnostics` + selftest.
+- **MCP vướng:**
+  - Sửa scene qua MCP âm thầm xoá script nào tham chiếu autoload. Đã gắn tay trong `main.tscn`, không sửa scene này qua MCP nữa.
+  - `check_script` không trả dòng lỗi; phải dùng `godot --check-only`.
+  - Số nguyên bị ghi thành float.
+- **Lỗi tìm được nhờ selftest:** `queue_free` để nút dialog cũ nằm lại tới cuối frame -> bấm nhầm "Nhận nhiệm vụ" thay vì "Nhận thưởng"; vòng tham chiếu dict -> anchor -> lambda làm rò `main.gd`.
+- **Lỗi tìm được nhờ ảnh chụp:**
+  - Hạt to 1m vì thiếu `billboard_keep_scale`.
+  - Shader `blend_add` trên Compatibility không nhân ALPHA, nên phải tự nhân.
+  - Sàn cháy sáng do ambient, sun và glow quá mạnh.
+  - Dấu "!" hiện sai trên Brann.
+  - Túi đồ tràn màn hình, boss bar lệch tâm.
+- **So với demo2:** cùng gameplay nhưng bản Web nặng hơn nhiều: ~14.5MB tải (wasm 9.5MB) so với vài MB của Three.js. Code ~3.000 dòng GDScript so với ~1.950 dòng JS+CSS+HTML, vì UI phải dựng bằng Control thay vì HTML/CSS.
+- **Chưa kiểm chứng:** cảm giác điều khiển, FPS và độ sáng trên GPU thật, cảm ứng trên mobile (chưa có joystick ảo như demo2).
+
+---
+
 # demo5 -> Phaser 4 (2026-10-10) · XONG CODE, CHỜ ANH TEST TAY
 
 Anh duyệt: port + filter v4, sửa thẳng demo5.

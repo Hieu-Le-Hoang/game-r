@@ -12,8 +12,9 @@ Sandbox build cùng một vertical slice ARPG (hầm ngục -> sảnh -> boss) q
 | [demo4](demo4/) | Ngai Quỷ Vương | Dark fantasy kiểu Diablo 4 | Three.js + N8AO | Poly Haven PBR + Quaternius (Mixamo dự kiến) | Phase A xong, Phase B chờ Mixamo | [wcg-game-r-demo4.vercel.app](https://wcg-game-r-demo4.vercel.app/) |
 | [demo5](demo5/) | Hầm Mộ Ardwen | ARPG isometric 2D | Phaser 4 (npm) | Flare (CC-BY-SA 3.0) | Xong | [wcg-game-r-demo5.vercel.app](https://wcg-game-r-demo5.vercel.app/) |
 | [demo6](demo6/) | Ngai Ma Nữ | Anime kiểu Genshin | Three.js + three-vrm | VRoid + Quaternius UAL | Đang làm | [wcg-game-r-demo6.vercel.app](https://wcg-game-r-demo6.vercel.app/) |
+| [demo8](demo8/) | Hầm Mộ Vua Xương (Godot) | ARPG 3D, port demo2 sang Godot | Godot 4.7.2 (export Web) + Godot MCP | KayKit (CC0) | Xong, chờ test tay | [wcg-game-r-demo8.vercel.app](https://wcg-game-r-demo8.vercel.app/) |
 
-Deploy: Vercel team `wecare2`, project `wcg-game-r-demoN`. demo2–6 chạy `vercel deploy --prod` trong folder demo (Vercel tự build Vite). demo1 deploy riêng: bọc `demo1/preview/index.html` vào skeleton HTML rồi deploy như static.
+Deploy: Vercel team `wecare2`, project `wcg-game-r-demoN`. demo2–6 chạy `vercel deploy --prod` trong folder demo (Vercel tự build Vite). demo1 deploy riêng: bọc `demo1/preview/index.html` vào skeleton HTML rồi deploy như static. demo8 export Web bằng Godot headless rồi deploy folder `export/web` như static.
 
 ```mermaid
 flowchart LR
@@ -26,7 +27,7 @@ flowchart LR
     classDef g fill:#1a3a1a,stroke:#4caf50,color:#81c784
 ```
 
-Mọi demo (trừ demo1) đi chung pipeline trên.
+Mọi demo (trừ demo1 và demo8) đi chung pipeline trên. demo8 thay bước Vite bằng Godot: import glTF -> chạy headless kiểm lỗi -> export Web (WASM).
 
 ## Engine & art từng demo
 
@@ -56,9 +57,13 @@ Version lấy theo `package.json` (demo1: link CDN). Chi tiết nguồn art và 
 - **Engine:** Three.js 0.169.0 + @pixiv/three-vrm 3.5 · Vite 5.4.10.
 - **Art:** 7 avatar mẫu VRoid (license VRoid Hub, riêng `dark.vrm` là CC0) cho nhân vật. Animation lấy từ Quaternius Universal Animation Library 1 + 2 (CC0), retarget sang rig VRM lúc chạy. Môi trường và vũ khí dùng lại Quaternius từ demo3, tô bằng toon material.
 
+### demo8 — Hầm Mộ Vua Xương (Godot)
+- **Engine:** Godot 4.7.2, renderer Compatibility (WebGL2), export Web không thread. Agent lái Godot qua MCP (koltyakov/godot-mcp) ở chế độ headless trên VM không GPU. Có selftest tự chơi từ quán tới boss và chế độ chụp ảnh render CPU qua Xvfb.
+- **Art:** KayKit giống demo2. Model nhân vật được giải nén meshopt vì Godot không đọc `EXT_meshopt_compression`.
+
 ## Engine web-native (ghi chú 2026)
 
-Repo chỉ dùng engine **web-native**: viết bằng JS/TS, browser chạy thẳng, build bằng Vite. Không dùng loại engine export ra HTML5/WebAssembly (Unity, Godot, Defold, Cocos). Lý do: build nhẹ, debug bằng DevTools, và AI agent đọc/sửa code trực tiếp được.
+Repo ưu tiên engine **web-native**: viết bằng JS/TS, browser chạy thẳng, build bằng Vite. Lý do: build nhẹ, debug bằng DevTools, và AI agent đọc/sửa code trực tiếp được. Ngoại lệ là demo8 (Godot export WebAssembly), làm để thử AI lái engine có editor qua MCP. Bản Godot nặng hơn hẳn: ~14.5MB tải về (wasm 9.5MB + pck 4.9MB, đã nén brotli).
 
 | Engine | Loại | Vị thế 2026 | Repo |
 |---|---|---|---|
@@ -100,6 +105,7 @@ Tham số URL hữu ích: `?debug` (phím T dịch chuyển giữa các phòng, 
 ```
 game-r/
 ├── demo1 … demo6/     # mỗi demo độc lập: package.json, src/, public/, tools/, CREDITS.md
+├── demo8/             # project Godot: project.godot, scenes/, scripts/, assets/, tools/
 ├── docs/
 │   └── research-ai-game.md   # research xu hướng làm game bằng AI 2026
 ├── tasks/

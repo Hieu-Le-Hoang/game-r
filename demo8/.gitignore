@@ -1,0 +1,6 @@
+# Godot cache + bản export (tự sinh lại được)
+.godot/
+export/
+tools/node_modules/
+.vercel
+.env*

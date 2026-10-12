@@ -14,3 +14,11 @@
 - Sai: `fx.js` loot beam viết `pow(1.0 - vUv.y, 1.6)`. vUv.y nội suy vượt 1 chút -> cơ số âm -> NaN trên ANGLE/D3D -> bloom HalfFloat downsample lan NaN thành khối đen chữ nhật.
 - Rule: shader tự viết luôn kẹp đầu vào của `pow` / `sqrt` / `log` (`clamp(x, 0.0, 1.0)` hoặc `max(x, 0.0)`), tránh `normalize` vector 0 và chia cho 0. Copy `fx.js` sang demo mới -> soát lại các chỗ này.
 - Nhận diện: mảng đen cạnh thẳng theo khung hình + có bloom/HalfFloat -> nghi NaN trước. Clamp rồi vẫn đen -> thêm pass lọc `isnan` trước bloom.
+
+## 2026-10-12 · Godot 4 headless + MCP (demo8)
+- **MCP sửa scene xoá mất script:** `attach_script` / `modify_node` / `apply_scene_changes` của koltyakov/godot-mcp chạy trong context không nạp autoload. Script nào tham chiếu autoload (`S`, `Assets`) không compile được và bị bỏ khỏi `.tscn` mà vẫn báo success. Rule: sau mỗi lần MCP sửa scene, `grep script` file `.tscn`. Scene gốc gắn script autoload thì sửa tay.
+- **Import hỏng bị cache:** glb nén meshopt import fail, sau khi thay file thường Godot vẫn đánh dấu `valid=false`. Rule: thay file nguồn sau một lần import lỗi thì xoá `.import` + `.godot/imported/<tên>*` rồi `--import` lại.
+- **Hạt billboard to bất thường:** `BILLBOARD_PARTICLES` bỏ qua scale nếu thiếu `billboard_keep_scale = true`.
+- **Renderer Compatibility (Web):** `blend_add` không nhân ALPHA. Shader cộng sáng phải tự nhân `ALBEDO *= a`; ramp màu của hạt phải fade về đen chứ không chỉ alpha 0.
+- **GDScript:** `var x := dict.key` lỗi "Cannot infer type" vì Variant. Dùng `=` hoặc khai kiểu rõ. Lambda nhiều dòng nằm trong array/dict hay vỡ indent, nên tách ra biến local trước. `queue_free` con cũ rồi `get_child(0)` vẫn trả con cũ trong cùng frame, phải `remove_child` trước.
+- **Verify hình khi không có GPU:** `xvfb-run godot --rendering-driver opengl3` + `get_viewport().get_texture().get_image().save_png()` chụp được ảnh thật bằng llvmpipe. Cách này không phải browser, và bắt được 6 lỗi hình mà selftest headless không thấy.

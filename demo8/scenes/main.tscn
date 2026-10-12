@@ -1,0 +1,33 @@
+[gd_scene format=3]
+
+[ext_resource type="Environment" path="res://resources/env.tres" id="1_dvyko"]
+[ext_resource type="Script" path="res://scripts/fx.gd" id="2_f1065"]
+[ext_resource type="Script" path="res://scripts/main.gd" id="3_main"]
+[ext_resource type="Script" path="res://scripts/hud.gd" id="4_hud"]
+
+[node name="Main" type="Node3D" unique_id=2054422296]
+script = ExtResource("3_main")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=711527520]
+environment = ExtResource("1_dvyko")
+
+[node name="Sun" type="DirectionalLight3D" parent="." unique_id=775582369]
+transform = Transform3D(-0.5548444, 0.7471177, -0.36600924, 0, 0.4399392, 0.89802754, 0.8319541, 0.49826553, -0.2440978, 0, 0, 0)
+light_color = Color(0.71, 0.76, 1, 1)
+light_energy = 0.6
+shadow_enabled = true
+directional_shadow_max_distance = 45.0
+
+[node name="Camera3D" type="Camera3D" parent="." unique_id=1051870647]
+current = true
+fov = 36.0
+near = 0.1
+far = 200.0
+
+[node name="World" type="Node3D" parent="." unique_id=1412281663]
+
+[node name="Fx" type="Node3D" parent="." unique_id=1627781717]
+script = ExtResource("2_f1065")
+
+[node name="Hud" type="CanvasLayer" parent="." unique_id=129713382]
+script = ExtResource("4_hud")
