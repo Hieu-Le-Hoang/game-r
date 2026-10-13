@@ -1,0 +1,13 @@
+Âm thanh từ OpenGameArt.org:
+
+  pistol, ak47, m4a1, awp, awp_bolt, shotgun <- "Gunshot Sounds" by Tabasco — https://opengameart.org/content/gunshot-sounds
+    OGA ghi CC0, nhưng file creativecommons.txt trong gói ghi CC-BY 3.0 (Vincent Sevedge, 2009) -> xử lý như CC-BY 3.0, GHI CÔNG:
+    "Gunshot sounds by Vincent Sevedge (Tabasco), CC-BY 3.0 — https://creativecommons.org/licenses/by/3.0/"
+    Nội dung file gốc: Copyright (c) 2009 Vincent Sevedge Audio and Visual content is covered under the Creative Commons Attribution 3.0 Unported License http://creativecommons.org/licenses/by/3.0/
+  deagle <- "Gunshots" by kurt — https://opengameart.org/content/gunshots (CC0)
+  smg <- "Random gunfire SFX" by iamoneabe — https://opengameart.org/content/random-gunfire-sfx (CC0)
+  reload_rifle, reload_pistol, pump <- "Gun reload sounds" by SpringySpringo — https://opengameart.org/content/gun-reload-sounds (CC0)
+  deploy <- "2 Gun Reloads" by StarNinjas — https://opengameart.org/content/2-gun-reloads (CC0)
+  dryfire <- "Gun reload, lock or click sound" by pauliuw — https://opengameart.org/content/gun-reload-lock-or-click-sound (CC0)
+  explode <- "Chunky Explosion" by Joth — https://opengameart.org/content/chunky-explosion (CC0)
+  c4_beep <- tự tổng hợp (sine 2.4 kHz) trong build-assets.mjs

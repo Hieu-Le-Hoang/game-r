@@ -1,0 +1,116 @@
+:root {
+  --hud: rgba(255, 176, 30, 0.88);
+  --hud-dim: rgba(255, 176, 30, 0.45);
+  --red: #ff4a3a;
+  --t: #e8b04a;
+  --ct: #6fa8ff;
+  --num: 'Teko', Impact, 'Arial Narrow', sans-serif;
+  --txt: 'Be Vietnam Pro', system-ui, sans-serif;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; overflow: hidden; background: #000; color: #eee; font-family: var(--txt); user-select: none; }
+#c { position: fixed; inset: 0; width: 100%; height: 100%; display: block; }
+.hidden { display: none !important; }
+
+/* ---------- HUD ---------- */
+#hud { position: fixed; inset: 0; pointer-events: none; color: var(--hud); text-shadow: 0 0 2px rgba(0, 0, 0, 0.6); }
+#hud .ico { font-size: 0.8em; margin-right: 0.15em; opacity: 0.9; }
+#bl, #timer, #moneybox, #ammo { position: absolute; bottom: 14px; font-family: var(--num); font-size: 54px; line-height: 1; display: flex; align-items: baseline; gap: 6px; }
+#bl { left: 22px; }
+#bl .shield { margin-left: 34px; }
+#bl.low { color: var(--red); }
+#timer { left: 50%; transform: translateX(-50%); }
+#timer.low { color: var(--red); }
+#bombicon { position: absolute; bottom: 18px; left: 50%; transform: translateX(-50%); font-family: var(--num); font-size: 46px; color: var(--red); animation: blink 0.8s infinite; }
+#moneybox { right: 24px; bottom: 80px; font-size: 46px; }
+#moneydelta { position: absolute; right: 0; top: -34px; font-size: 32px; opacity: 0; transition: opacity 0.4s; }
+#moneydelta.show { opacity: 1; transition: none; }
+#moneydelta.plus { color: #8fe36a; }
+#moneydelta.minus { color: var(--red); }
+#ammo { right: 24px; }
+#ammo .sep { color: var(--hud-dim); margin: 0 6px; }
+#wname { font-family: var(--txt); font-size: 14px; font-weight: 600; margin-left: 10px; color: var(--hud-dim); }
+#score { position: absolute; top: 10px; left: 50%; transform: translateX(-50%); display: flex; gap: 18px; align-items: center; font-family: var(--num); font-size: 30px; background: rgba(0, 0, 0, 0.35); padding: 2px 16px; border-radius: 4px; }
+#score .t { color: var(--t); } #score .ct { color: var(--ct); }
+#round { font-size: 20px; color: #ddd; }
+#fps { position: absolute; right: 8px; top: 8px; font: 12px monospace; color: #8a8; }
+
+#cross { position: absolute; left: 50%; top: 50%; }
+#cross i { position: absolute; background: rgba(80, 255, 80, 0.9); box-shadow: 0 0 1px #000; }
+#cross .t, #cross .b { width: 2px; height: 8px; left: -1px; }
+#cross .l, #cross .r { width: 8px; height: 2px; top: -1px; }
+
+#scope { position: absolute; inset: 0; }
+#scope .ring { position: absolute; left: 50%; top: 50%; width: 96vh; height: 96vh; transform: translate(-50%, -50%); border-radius: 50%; box-shadow: 0 0 0 200vmax #000; border: 2px solid #000; }
+#scope i { position: absolute; background: #000; }
+#scope .h { left: 0; right: 0; top: 50%; height: 1px; }
+#scope .v { top: 0; bottom: 0; left: 50%; width: 1px; }
+
+#hurt { position: absolute; inset: 0; box-shadow: inset 0 0 140px rgba(200, 0, 0, 0.9); opacity: 0; transition: opacity 0.5s; }
+#hurt.on { opacity: 0.8; transition: none; }
+#dmgdir { position: absolute; left: 50%; top: 50%; width: 0; height: 0; }
+#dmgdir i { position: absolute; left: -40px; top: -150px; width: 80px; height: 16px; border-radius: 50% 50% 0 0; border-top: 6px solid rgba(255, 40, 30, 0.85); transform-origin: 40px 150px; transition: opacity 1s; }
+
+#radar { position: absolute; left: 14px; top: 14px; width: 200px; height: 200px; border-radius: 50%; background: rgba(0, 0, 0, 0.35); border: 2px solid var(--hud-dim); }
+#place { position: absolute; left: 14px; top: 220px; width: 200px; text-align: center; font-size: 13px; font-weight: 600; color: #dcdcdc; }
+
+#killfeed { position: absolute; right: 14px; top: 60px; display: flex; flex-direction: column; gap: 4px; align-items: flex-end; }
+#killfeed div { background: rgba(0, 0, 0, 0.5); padding: 3px 10px; border-radius: 3px; font-size: 14px; color: #eee; white-space: nowrap; }
+#killfeed div.me { border: 1px solid #e33; }
+#killfeed .T { color: var(--t); font-weight: 600; } #killfeed .CT { color: var(--ct); font-weight: 600; }
+#killfeed .w { color: #ccc; margin: 0 8px; font-size: 12px; }
+#killfeed .hs { color: #f66; font-weight: 800; margin-right: 6px; }
+
+#center { position: absolute; left: 0; right: 0; top: 26%; text-align: center; font-size: 34px; font-weight: 800; color: #fff; text-shadow: 0 2px 8px #000; }
+#center small { display: block; font-size: 16px; font-weight: 600; color: #ddd; margin-top: 6px; }
+#hint { position: absolute; left: 0; right: 0; bottom: 120px; text-align: center; font-size: 15px; font-weight: 600; color: #fff; text-shadow: 0 1px 4px #000; }
+#progress { position: absolute; left: 50%; top: 62%; transform: translateX(-50%); width: 320px; text-align: center; }
+#progress .label { font-size: 14px; font-weight: 600; color: #fff; margin-bottom: 6px; text-shadow: 0 1px 3px #000; }
+#progress .bar { height: 10px; background: rgba(0, 0, 0, 0.5); border: 1px solid var(--hud); }
+#progress .bar i { display: block; height: 100%; background: var(--hud); width: 0; }
+#spec { position: absolute; left: 0; right: 0; bottom: 0; height: 64px; background: rgba(0, 0, 0, 0.55); display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 600; color: #fff; }
+
+/* Menu mua kiểu CS 1.3: chữ trắng/vàng trên nền trong suốt, góc trái */
+#buymenu { position: absolute; left: 30px; top: 30%; background: rgba(0, 0, 0, 0.55); padding: 14px 20px; min-width: 300px; font-size: 16px; line-height: 1.7; color: #fff; border-left: 3px solid var(--hud); pointer-events: auto; }
+#buymenu h3 { margin: 0 0 6px; color: var(--hud); font-size: 17px; }
+#buymenu .it { cursor: pointer; display: flex; justify-content: space-between; gap: 24px; }
+#buymenu .it:hover { color: var(--hud); }
+#buymenu .it.no { color: #777; }
+#buymenu .price { color: #bdbdbd; font-family: var(--num); font-size: 20px; }
+#buymenu .k { color: var(--hud); font-weight: 800; margin-right: 8px; }
+#buymenu .foot { margin-top: 6px; color: #aaa; font-size: 13px; }
+
+#scoreboard { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: min(820px, 94vw); background: rgba(0, 0, 0, 0.75); border: 1px solid #555; padding: 14px 18px; color: #ddd; font-size: 14px; }
+#scoreboard h2 { margin: 0 0 8px; font-size: 18px; color: #fff; display: flex; justify-content: space-between; }
+#scoreboard table { width: 100%; border-collapse: collapse; margin-bottom: 10px; }
+#scoreboard th { text-align: left; font-weight: 600; color: #999; border-bottom: 1px solid #444; padding: 3px 6px; }
+#scoreboard td { padding: 3px 6px; }
+#scoreboard tr.dead td { opacity: 0.45; }
+#scoreboard tr.me td { background: rgba(255, 255, 255, 0.08); }
+#scoreboard .T td:first-child { color: var(--t); } #scoreboard .CT td:first-child { color: var(--ct); }
+#scoreboard .num { text-align: right; font-family: var(--num); font-size: 19px; }
+
+/* ---------- Menu chính ---------- */
+#menu { position: fixed; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; background: radial-gradient(circle at 50% 40%, rgba(60, 45, 20, 0.55), rgba(0, 0, 0, 0.88)); z-index: 5; }
+#menu.ingame { background: rgba(0, 0, 0, 0.6); }
+#menu .panel { width: min(760px, 94vw); padding: 26px 30px; background: rgba(18, 16, 12, 0.85); border: 1px solid rgba(255, 176, 30, 0.35); }
+#menu h1 { margin: 0; font-family: var(--num); font-size: 68px; letter-spacing: 3px; color: var(--hud); line-height: 0.9; }
+#menu .sub { margin: 6px 0 18px; color: #bbb; font-size: 14px; }
+#menu .row { margin-bottom: 16px; }
+#menu .label { font-size: 13px; color: #999; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 1px; }
+#menu .opts { display: flex; flex-wrap: wrap; gap: 8px; }
+#menu button { font-family: var(--txt); font-size: 15px; padding: 10px 16px; background: rgba(255, 255, 255, 0.06); color: #eee; border: 1px solid #555; cursor: pointer; }
+#menu button:hover { border-color: var(--hud); color: #fff; }
+#menu button.on { border-color: var(--hud); background: rgba(255, 176, 30, 0.15); }
+#menu button.team { display: flex; flex-direction: column; align-items: flex-start; min-width: 160px; }
+#menu button.team b { color: var(--hud); margin-right: 6px; }
+#menu button.team small { color: #999; font-size: 12px; margin-top: 2px; }
+#menu button.team.t:hover { border-color: var(--t); } #menu button.team.ct:hover { border-color: var(--ct); }
+#menu button.ghost { background: none; margin-left: 8px; }
+#menu .sliders label { display: flex; align-items: center; gap: 10px; font-size: 14px; color: #ccc; margin-bottom: 6px; }
+#menu .sliders input[type=range] { width: 220px; }
+#menu .keys { font-size: 12.5px; color: #999; line-height: 1.7; border-top: 1px solid #333; padding-top: 10px; }
+#menu .keys b { color: #ddd; }
+#menu .credit { margin-top: 10px; font-size: 12px; color: #777; }
+#loading { color: #ccc; }
+@keyframes blink { 50% { opacity: 0.3; } }

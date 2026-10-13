@@ -13,8 +13,9 @@ Sandbox build cùng một vertical slice ARPG (hầm ngục -> sảnh -> boss) q
 | [demo5](demo5/) | Hầm Mộ Ardwen | ARPG isometric 2D | Phaser 4 (npm) | Flare (CC-BY-SA 3.0) | Xong | [wcg-game-r-demo5.vercel.app](https://wcg-game-r-demo5.vercel.app/) |
 | [demo6](demo6/) | Ngai Ma Nữ | Anime kiểu Genshin | Three.js + three-vrm | VRoid + Quaternius UAL | Đang làm | [wcg-game-r-demo6.vercel.app](https://wcg-game-r-demo6.vercel.app/) |
 | [demo8](demo8/) | Hầm Mộ Vua Xương (Godot) | ARPG 3D, port demo2 sang Godot | Godot 4.7.2 (export Web) + Godot MCP | KayKit (CC0) | Xong, chờ test tay | [wcg-game-r-demo8.vercel.app](https://wcg-game-r-demo8.vercel.app/) |
+| [demo9](demo9/) | Bụi Sa Mạc | FPS chiến thuật kiểu Counter-Strike 1.3, 5v5 với bot | Three.js + Rapier | Quaternius + Poly Haven (CC0) | Xong, chờ test tay | [wcg-game-r-demo9.vercel.app](https://wcg-game-r-demo9.vercel.app/) |
 
-Deploy: Vercel team `wecare2`, project `wcg-game-r-demoN`. demo2–6 chạy `vercel deploy --prod` trong folder demo (Vercel tự build Vite). demo1 deploy riêng: bọc `demo1/preview/index.html` vào skeleton HTML rồi deploy như static. demo8 export Web bằng Godot headless rồi deploy folder `export/web` như static.
+Deploy: Vercel team `wecare2`, project `wcg-game-r-demoN`. demo2–6 và demo9 chạy `vercel deploy --prod` trong folder demo (Vercel tự build Vite). demo1 deploy riêng: bọc `demo1/preview/index.html` vào skeleton HTML rồi deploy như static. demo8 export Web bằng Godot headless rồi deploy folder `export/web` như static.
 
 ```mermaid
 flowchart LR
@@ -60,6 +61,10 @@ Version lấy theo `package.json` (demo1: link CDN). Chi tiết nguồn art và 
 ### demo8 — Hầm Mộ Vua Xương (Godot)
 - **Engine:** Godot 4.7.2, renderer Compatibility (WebGL2), export Web không thread. Agent lái Godot qua MCP (koltyakov/godot-mcp) ở chế độ headless trên VM không GPU. Có selftest tự chơi từ quán tới boss và chế độ chụp ảnh render CPU qua Xvfb.
 - **Art:** KayKit giống demo2. Model nhân vật được giải nén meshopt vì Godot không đọc `EXT_meshopt_compression`.
+
+### demo9 — Bụi Sa Mạc (FPS kiểu CS 1.3)
+- **Engine:** Three.js 0.169.0 + Rapier 0.21 (character controller, raycast đạn, lựu đạn nảy) · Vite 5.4.10. Logic game (`src/sim`) tách khỏi render nên selftest 10 bot đánh nhau chạy được trên Node. Có thêm smoke test client bằng jsdom + renderer giả, và tool chụp góc nhìn FPS bằng rasterizer CPU (không cần browser).
+- **Art:** Quaternius Ultimate Animated Character (SWAT cho CT, Adventurer cho T) + Ultimate Gun Pack (CC0). Texture sa thạch / cát của Poly Haven (CC0). Âm thanh lấy từ Kenney + OpenGameArt; tiếng súng của Vincent Sevedge theo CC-BY 3.0.
 
 ## Engine web-native (ghi chú 2026)
 

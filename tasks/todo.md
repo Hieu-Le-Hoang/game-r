@@ -1,3 +1,65 @@
+# demo9 — FPS chiến thuật kiểu Counter-Strike 1.3 (2026-10-13) · XONG, CHỜ ANH TEST TAY
+
+Anh duyệt "không (đổi). chạy đi" với option mặc định: Three.js + Rapier, offline 5v5 với bot, có đặt/gỡ bom, art low-poly Quaternius + Poly Haven. Live: https://wcg-game-r-demo9.vercel.app
+
+## 0. Asset (subagent)
+- [x] Lính Quaternius Ultimate Animated Character (SWAT = CT, Adventurer = T), 18 clip, socket súng `GunSocket_R`. Lấy GLB qua poly.pizza vì Google Drive chặn tải từ VM
+- [x] Ultimate Gun Pack: 9 súng gom trong `guns.glb`, mỗi súng có node đầu nòng. Model C4 tự dựng bằng khối
+- [x] 7 bộ texture Poly Haven (sa thạch, vữa, cát, đá lát, gỗ, cửa gỗ, kim loại gỉ), WebP
+- [x] 28 âm thanh từ Kenney + OpenGameArt. Tiếng súng Tabasco theo CC-BY 3.0, đã ghi công trong menu + CREDITS.md
+- [x] Tổng `public/` 4MB. Chạy lại được bằng `tools/build-assets.mjs`
+
+## 1. Khung
+- [x] Vite + Three.js 0.169 + `@dimforge/rapier3d-compat` 0.21. Logic `src/sim` tách khỏi `src/client`
+- [x] Di chuyển kiểu GoldSrc: friction/accelerate/air strafe, crouch-jump, Shift đi rón rén, khựng lại khi trúng đạn
+- [x] Viewmodel: nhún khi đi, giật khi bắn, hạ súng khi nạp đạn / rút súng, chớp nòng. Bỏ tay (tay dựng bằng khối nhìn vụng)
+
+## 2. Map
+- [x] Kiểu de_dust2 thu nhỏ: Long A, Catwalk, Mid (có cột chắn tầm nhìn), hầm B trên/dưới có mái, 2 site, thùng gỗ
+- [x] Nav grid 0.5m + A* + làm mượt đường. Bot không cần graph waypoint vẽ tay. `tools/map-ascii.mjs` in map + kiểm đường nối
+
+## 3. Bắn súng
+- [x] Raycast Rapier cho tường, hitbox giải tích cho người (đầu x4, bụng x1.25, chân x0.75)
+- [x] Spread + KickBack theo số CS 1.6, AWP 2 mức zoom, súng lục semi-auto
+- [x] Glock, USP, Deagle, MP5, AK-47, M4A1, AWP, HE (vật lý Rapier, nảy), dao (đâm sau lưng x3)
+- [x] Giáp/mũ theo armor ratio, lỗ đạn, bụi, máu, tracer, nổ
+
+## 4. Luật CS
+- [x] freeze 5s, mua trong 20s đầu, round 1:55, C4 35s, gỡ 10s/5s
+- [x] Kinh tế đầy đủ (loss bonus tăng dần, thưởng đặt bom 800 cho T)
+- [x] Buy menu số kiểu 1.3, chỉ mua trong spawn. Nhặt súng / bom, vứt súng (G)
+- [x] Thắng 16 round trước (không đổi phe giữa trận)
+
+## 5. Bot AI
+- [x] Mua đồ theo tiền, phe T rush site / lurk / nhặt bom, phe CT chia A-B-mid / xoay site / gỡ bom
+- [x] Nhìn qua raycast + FOV, nghe tiếng súng, phản xạ + sai số ngắm + bù giật theo 3 mức khó, counter-strafe, bắn loạt, ném HE
+
+## 6. HUD
+- [x] Máu/giáp/giờ/tiền/đạn, tâm ngắm co giãn, radar xoay, kill feed, bảng điểm, scope, hướng bị bắn, thanh đặt/gỡ bom, giọng radio
+- [x] Menu: chọn phe (T / CT / tự chọn / xem bot), độ khó, độ nhạy, âm lượng
+
+## 7. Verify + deploy
+- [x] `npm run build` sạch
+- [x] `npm run selftest`: 4 seed × 8 round PASS, có người chơi ở cả 2 phe cũng PASS. Ra đủ 4 kiểu kết thúc round
+- [x] `tools/smoke-client.mjs` (jsdom + renderer giả): chạy 400s ở chế độ T/CT/xem bot, không lỗi JS, scene không phình
+- [x] `tools/render-scene.mjs`: chụp góc nhìn FPS bằng rasterizer CPU, soát map / hướng model / súng trên tay / viewmodel
+- [x] Deploy Vercel `wcg-game-r-demo9`. curl index, JS, glb, webp, mp3 đều 200
+- [x] README demo9 + README gốc + CREDITS.md
+- [ ] Anh chơi thử: cảm giác chuột, độ sáng/màu thật (ảnh CPU không có texture/bóng), FPS trên GPU thật
+- [ ] Chưa soát bằng ảnh: hướng ngẩng/cúi người (xoay bone Chest) và hiệu ứng nổ/khói
+
+## Review
+- **Bug tìm được nhờ selftest:**
+  - Bot dùng hết đạn súng lục từ 40m rồi rút dao.
+  - Tỉ lệ trúng chỉ 4% vì bot vừa chạy vừa xả đạn. Sửa: bot dừng hẳn khi bắn (counter-strafe), tap súng lục theo khoảng cách.
+  - Hai phe đứng yên bắn nhau suốt 90s dọc đường mid thẳng 75m. Sửa: thêm cột chắn mid + bot chỉ để ý địch trong 70m.
+  - Nav 1m nở vật cản làm tắc khe hẹp, chuyển sang lưới 0.5m.
+- **Bug tìm được nhờ ảnh CPU:** viewmodel quá to và quá sát camera. Tay dựng bằng khối bị lệch chỗ nên bỏ hẳn.
+- **Cân bằng:** T thắng nhiều hơn khi để bot tự đánh nhau (~70% round). Nguyên nhân là T dồn 5 người vào một site chỉ có 2 CT giữ, cộng thêm hiệu ứng ăn theo kinh tế (đội thắng còn súng xịn cho round sau). Chưa chỉnh thêm.
+- **Bundle:** JS 5MB (gzip 1.8MB), phần lớn là wasm Rapier nhúng base64. Asset 4MB.
+
+---
+
 # demo8 — ARPG 3D trên Godot 4 + Godot MCP (2026-10-12) · XONG, CHỜ ANH TEST TAY
 
 Anh duyệt "làm full". Bối cảnh: demo7 là bản Unity anh làm ở máy local; demo8 làm trên VM này (Ubuntu 24.04, 4 vCPU, 15GB RAM, không GPU, không display).

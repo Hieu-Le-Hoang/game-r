@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>demo9 — Bụi Sa Mạc (FPS kiểu CS 1.3)</title>
+  <link rel="icon" href="./favicon.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;800&family=Teko:wght@500;600&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <canvas id="c"></canvas>
+
+  <div id="hud" class="hidden">
+    <div id="cross"><i class="t"></i><i class="b"></i><i class="l"></i><i class="r"></i></div>
+    <div id="scope" class="hidden"><div class="ring"></div><i class="h"></i><i class="v"></i></div>
+    <div id="hurt"></div>
+    <div id="dmgdir"></div>
+    <canvas id="radar" width="200" height="200"></canvas>
+    <div id="place"></div>
+    <div id="killfeed"></div>
+    <div id="center"></div>
+    <div id="hint"></div>
+    <div id="progress" class="hidden"><div class="label"></div><div class="bar"><i></i></div></div>
+    <div id="bl"><span class="ico">✚</span><span id="hp">100</span><span class="ico shield">⛨</span><span id="armor">0</span></div>
+    <div id="timer"><span class="ico">◷</span><span id="time">1:55</span></div>
+    <div id="bombicon" class="hidden">C4</div>
+    <div id="moneybox"><span class="ico">$</span><span id="money">800</span><div id="moneydelta"></div></div>
+    <div id="ammo"><span id="mag">12</span><span class="sep">|</span><span id="reserve">100</span><span id="wname"></span></div>
+    <div id="score"><span class="t">T <b id="scoreT">0</b></span><span id="round">Round 1</span><span class="ct"><b id="scoreCT">0</b> CT</span></div>
+    <div id="spec" class="hidden"></div>
+    <div id="buymenu" class="hidden"></div>
+    <div id="scoreboard" class="hidden"></div>
+    <div id="fps"></div>
+  </div>
+
+  <div id="menu">
+    <div class="panel">
+      <h1>BỤI SA MẠC</h1>
+      <p class="sub">FPS chiến thuật kiểu Counter-Strike 1.3 · 5v5 với bot · demo9</p>
+      <div id="loading">Đang tải… <span id="loadpct">0%</span></div>
+      <div id="setup" class="hidden">
+        <div class="row">
+          <div class="label">Chọn phe</div>
+          <div class="opts" id="teamOpts">
+            <button data-team="T" class="team t"><b>1</b> Terrorist<small>AK-47 · đặt bom C4</small></button>
+            <button data-team="CT" class="team ct"><b>2</b> Counter-Terrorist<small>M4A1 · giữ site, gỡ bom</small></button>
+            <button data-team="auto" class="team"><b>5</b> Tự chọn</button>
+            <button data-team="spec" class="team"><b>6</b> Xem bot đánh</button>
+          </div>
+        </div>
+        <div class="row">
+          <div class="label">Độ khó bot</div>
+          <div class="opts" id="skillOpts">
+            <button data-skill="easy">Dễ</button><button data-skill="normal" class="on">Thường</button><button data-skill="hard">Khó</button>
+          </div>
+        </div>
+        <div class="row sliders">
+          <label>Độ nhạy chuột <input id="sens" type="range" min="0.5" max="6" step="0.1" /> <span id="sensv"></span></label>
+          <label>Âm lượng <input id="vol" type="range" min="0" max="1" step="0.05" /> <span id="volv"></span></label>
+          <label><input id="voice" type="checkbox" /> Giọng radio ("Bomb has been planted")</label>
+        </div>
+        <div class="keys">
+          <b>WASD</b> đi · <b>Chuột</b> ngắm/bắn · <b>Chuột phải</b> scope / đâm dao · <b>Space</b> nhảy · <b>Ctrl</b> ngồi · <b>Shift</b> đi rón rén ·
+          <b>R</b> nạp đạn · <b>1-5</b> / lăn chuột đổi súng · <b>B</b> mua đồ · <b>E</b> gỡ bom · <b>G</b> vứt súng · <b>Tab</b> bảng điểm · <b>Esc</b> menu
+        </div>
+      </div>
+      <div id="resume" class="hidden"><button id="resumeBtn">Tiếp tục (click để khoá chuột)</button><button id="quitBtn" class="ghost">Về menu chọn phe</button></div>
+    </div>
+    <div class="credit">Art: Quaternius · Poly Haven · Kenney (CC0) · Tiếng súng: Vincent Sevedge / Tabasco (CC-BY 3.0) + OpenGameArt (CC0) · Engine: Three.js + Rapier</div>
+  </div>
+
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>

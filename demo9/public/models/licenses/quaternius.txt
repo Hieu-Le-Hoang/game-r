@@ -1,0 +1,19 @@
+Quaternius — https://quaternius.com (mirror tải GLB: https://poly.pizza/u/Quaternius)
+Creative Commons Zero v1.0 Universal (CC0 1.0) — https://creativecommons.org/publicdomain/zero/1.0/
+Public domain: dùng tự do (cả thương mại), không bắt buộc ghi công.
+
+Nhân vật (Ultimate Animated Character Pack):
+  chars/ct.glb <- "SWAT" https://poly.pizza/m/Btfn3G5Xv4
+  chars/t.glb <- "Adventurer" https://poly.pizza/m/5EGWBMpuXq
+
+Súng (Ultimate Gun Pack; grenade từ Toon Shooter Game Kit):
+  guns.glb#glock <- "Pistol (Ultimate Gun Pack)" https://poly.pizza/m/J3i9KDQ3kt
+  guns.glb#usp <- "Pistol (Ultimate Gun Pack)" https://poly.pizza/m/Jyn9qex4ba
+  guns.glb#deagle <- "Pistol (Ultimate Gun Pack)" https://poly.pizza/m/52kQzphmeF
+  guns.glb#mp5 <- "Submachine Gun (Ultimate Gun Pack)" https://poly.pizza/m/7ehatxr7FY
+  guns.glb#ak47 <- "Assault Rifle (Ultimate Gun Pack)" https://poly.pizza/m/K2lXTYFSLC
+  guns.glb#m4a1 <- "Assault Rifle (Ultimate Gun Pack)" https://poly.pizza/m/Bgvuu4CUMV
+  guns.glb#awp <- "Sniper Rifle (Ultimate Gun Pack)" https://poly.pizza/m/TKaBjAEofL
+  guns.glb#m3 <- "Shotgun (Ultimate Gun Pack)" https://poly.pizza/m/DcNE0HVdW8
+  guns.glb#knife <- "Knife (Ultimate Gun Pack)" https://poly.pizza/m/NNzzvlGXzO
+  guns.glb#grenade <- "Grenade (Toon Shooter Game Kit)" https://poly.pizza/m/xnuUzBTsUg

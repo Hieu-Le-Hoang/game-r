@@ -1,0 +1,11 @@
+Poly Haven — https://polyhaven.com (texture)
+Creative Commons Zero v1.0 Universal (CC0 1.0) — https://creativecommons.org/publicdomain/zero/1.0/
+Public domain: dùng tự do (cả thương mại), không bắt buộc ghi công.
+
+  textures/gravelly_sand_{diff,nor,arm}.webp <- https://polyhaven.com/a/gravelly_sand
+  textures/sandstone_blocks_08_{diff,nor,arm}.webp <- https://polyhaven.com/a/sandstone_blocks_08
+  textures/sandstone_cracks_{diff,nor,arm}.webp <- https://polyhaven.com/a/sandstone_cracks
+  textures/red_sandstone_pavement_{diff,nor,arm}.webp <- https://polyhaven.com/a/red_sandstone_pavement
+  textures/weathered_brown_planks_{diff,nor,arm}.webp <- https://polyhaven.com/a/weathered_brown_planks
+  textures/wooden_garage_door_{diff,nor,arm}.webp <- https://polyhaven.com/a/wooden_garage_door
+  textures/rusty_metal_02_{diff,nor,arm}.webp <- https://polyhaven.com/a/rusty_metal_02
