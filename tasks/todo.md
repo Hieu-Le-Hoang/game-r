@@ -1,3 +1,89 @@
+# demo10 — Clone VLTK1 2D (2026-10-13) · XONG, CHỜ ANH TEST TAY · https://wcg-game-r-demo10.vercel.app
+
+Spec chi tiết nằm ở `demo10/gameplay.md`. Những gì đã chốt:
+- **Engine:** Phaser 4.2.1 + Vite
+- **Art:** chỉ dùng Flare (CC-BY-SA 3.0)
+- **Gameplay:** offline, chạy web desktop; 5 phái (Thiếu Lâm Côn, Đường Môn Phi đao, Nga My Kiếm, Cái Bang Chưởng, Võ Đang Kiếm); cấp tối đa 60, lên 60 mất khoảng 2 giờ khi bật auto; Ba Lăng huyện + Tương Dương + 4 map luyện công
+- **Không làm:** Tống Kim, Dã Tẩu, mobile, độ bền, thể lực
+- **Deploy:** Vercel `wcg-game-r-demo10`
+
+**Kiến trúc:** tách **logic thuần JS** (`src/core/`, không import Phaser) khỏi **render** (`src/scenes/`). Nhờ vậy selftest chạy bằng Node giả lập được auto train 1 → 60 mà không cần browser. Tránh lặp lại demo5, nơi cả game dồn trong 1 file `main.js` 900 dòng.
+
+## M0. Asset Flare
+- [x] Sparse clone `flare-game` (chỉ lấy fantasycore + empyrean_campaign) vào `demo10/_raw/`, đưa `_raw/` vào gitignore
+- [x] Lập bảng ánh xạ, ghi vào `gameplay.md` mục 4:
+  - Map Flare → Ba Lăng huyện / Tương Dương / 4 map luyện công
+  - Quái Flare → khoảng 12 loại theo 5 hệ + 1 boss
+  - Bộ đồ + vũ khí paper-doll → 5 phái
+  - Hiệu ứng power → skill
+- [x] Viết `tools/build_assets.py` dựa trên bản của demo5: thêm parse map Flare sang JSON, đóng atlas WebP. Mục tiêu `public/` dưới 15MB
+- [x] `CREDITS.md` + `CREDITS-flare.txt`
+
+## M1. Khung + di chuyển
+- [x] Vite + Phaser 4.2.1. Lấy từ `git show HEAD:demo5/src/main.js` các phần: A* 8 hướng, `regAtlas`, `setFrame`, lighting
+- [x] `core/iso.js` (đổi tọa độ), `core/path.js` (A*), `scenes/World.js`: render map, click-to-move, camera bám nhân vật, ngồi hồi phục (V)
+- [x] Đổi map qua cổng/xa phu
+
+## M2. Combat lõi
+- [x] `core/stats.js`: 4 chỉ số → máu, nội lực, sát thương, chính xác, né. Cộng +5 tiềm năng và +1 kỹ năng mỗi cấp
+- [x] `core/combat.js`: chính xác/né, kháng, choáng/độc/chậm. Chết thì về điểm hồi sinh, mất 1% exp
+- [x] Quái AI (đi tuần, đuổi, đánh, về chỗ cũ), hồi sinh theo khu. Click đánh liên tục tới khi quái chết
+- [x] `core/exp.js`: bảng exp 1-60, exp giảm theo chênh lệch cấp
+
+## M3. Ngũ hành + trang bị
+- [x] `core/element.js`: vòng khắc, kháng theo hệ cho quái và người
+- [x] `core/loot.js`: rơi đồ trắng/xanh với dòng ngẫu nhiên theo loại đồ + hệ, rơi tiền
+- [x] `core/equip.js`: 10 ô, kích dòng ẩn theo vòng tương sinh 5 cặp (dòng xám → xanh)
+- [x] UI dạng DOM: túi đồ (F4), trang bị/thuộc tính (F3), tooltip đồ, Alt hiện tên đồ dưới đất
+
+## M4. Thành + NPC
+- [x] Ba Lăng huyện, Tương Dương: Xa phu, Dược điếm, Tạp hóa, Thợ rèn (chỉ bán), Rương chứa đồ, Vệ binh
+- [x] Mua/bán, Thổ Địa Phù về thành, ô thuốc 1-2-3
+
+## M5. Auto train
+- [x] `core/auto.js` (logic thuần): tìm quái gần nhất trong bán kính quanh điểm bật auto → đánh → xoay skill → uống thuốc theo ngưỡng % → nhặt đồ theo lọc phẩm chất + nhặt tiền → dừng khi hết thuốc/đầy túi
+- [x] Nút Auto trên HUD + panel cài đặt, lưu cấu hình
+
+## M6. Môn phái + skill
+- [x] Màn tạo nhân vật (giới tính, hệ, luật Kim nam / Thủy nữ), 3 slot
+- [x] `core/skills.js`: 5 phái × khoảng 6 skill, mở theo cấp 10/20/30/40/50 + tuyệt kỹ khi Xuất sư. Dùng hiệu ứng power của Flare, phân biệt theo 5 hệ
+- [x] Panel võ công (F5), gán skill vào chuột trái/phải
+
+## M7. Nhiệm vụ + boss + save
+- [x] 3 nhiệm vụ tân thủ, chuỗi môn phái 10 → 50 + Xuất sư, panel nhiệm vụ (F11)
+- [x] Boss hoàng kim cấp 55-60, hồi sinh theo giờ, rơi bộ Hoàng Kim theo phái
+- [x] `core/save.js`: lưu localStorage, 3 slot
+
+## M8. Hoàn thiện + verify + deploy
+- [x] HUD đầy đủ (thanh máu/nội lực, ô skill, ô thuốc, minimap, log), bản đồ (Tab), âm thanh Flare
+- [x] `tools/selftest.mjs`: Node chạy auto train 1 → 60 với từng phái. Đạt khi thời gian giả lập nằm trong 1h45-2h15, không chết liên tục, không kẹt đường
+- [x] Verify bằng `npm run build` + selftest. Không tự mở browser, phần nhìn anh tự test tay
+- [x] Deploy Vercel `wcg-game-r-demo10`, curl lại link live
+
+## Rủi ro
+- Map Flare có sẵn có thể không đủ 6 khu đúng cấp. Khi đó khu thiếu sẽ tự sinh từ tileset (M0 sẽ biết)
+- Art Flare có thể không đủ cho 5 phái nhìn khác nhau rõ ràng. Hướng xử lý: đổi bộ đồ + vũ khí + tint màu theo hệ
+- Cân bằng 2 giờ dựa vào selftest giả lập, cảm giác thật vẫn cần anh test tay
+
+## Review (2026-10-13)
+- **Selftest** (`node tools/selftest.mjs all`, seed 7): cả 5 phái lên cấp 60 trong **109-129 phút** giả lập (Thiếu Lâm 117, Đường Môn 129, Nga My 115, Cái Bang 115, Võ Đang 109). Làm đủ chuỗi nhiệm vụ t1 → Xuất Sư, rơi đồ Hoàng Kim, chết 0-1 lần, không kẹt
+- **UI smoke test** (`node tools/uitest.mjs`): mọi bảng, NPC, HUD của 5 phái chạy không lỗi runtime (DOM giả, không mở browser)
+- `npm run build` sạch lỗi. Deploy Vercel `wcg-game-r-demo10`, đã `vercel git disconnect`, curl link live + asset đều trả 200
+- **Chưa verify:** phần hình (map, sprite, hiệu ứng, chuột) chưa xem bằng mắt vì không tự mở browser. Đã soát API Phaser 4 theo `node_modules/phaser/skills/v3-to-v4-migration` (sửa `setTintFill`)
+- **Đổi so với plan:**
+  - Nhiệm vụ môn phái đổi từ "diệt quái loại X" sang "diệt N quái ở map Y", để hợp với auto
+  - Cổng ra map thành vật thể phải bấm, vì đường đi auto từng xuyên qua cổng
+  - Không làm khu sảnh môn phái riêng: 5 sứ giả đứng ở Tương Dương
+- **Lỗi đã sửa nhờ selftest:**
+  - Bãi quái nằm trên đảo tách biệt (đã thêm flood fill)
+  - Quái chỉ hồi sinh khi người chơi đứng xa
+  - Đồ rơi vào ô không tới được
+  - Quái bị kéo xa quay về hồi đầy máu
+  - Kẹt góc tường khi đi theo đường đã nắn thẳng
+  - Auto chưa bật lúc đi bộ tới bãi, nên quái đánh mà không đánh trả
+
+---
+
 # demo9 — FPS chiến thuật kiểu Counter-Strike 1.3 (2026-10-13) · XONG, CHỜ ANH TEST TAY
 
 Anh duyệt "không (đổi). chạy đi" với option mặc định: Three.js + Rapier, offline 5v5 với bot, có đặt/gỡ bom, art low-poly Quaternius + Poly Haven. Live: https://wcg-game-r-demo9.vercel.app

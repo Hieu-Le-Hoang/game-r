@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Võ Lâm Truyền Kỳ — demo10</title>
+  <meta name="description" content="Demo clone gameplay Võ Lâm Truyền Kỳ 1 (2D isometric), chơi offline trên web. Art Flare (CC-BY-SA 3.0) — game-r demo10">
+  <link rel="icon" type="image/webp" href="./a/portraits/male04.webp">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif:wght@600;700&family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap">
+</head>
+<body>
+  <div id="app"></div>
+
+  <!-- màn chọn nhân vật / tạo nhân vật -->
+  <div id="title" class="screen">
+    <div class="title-box">
+      <h1>Võ Lâm Truyền Kỳ</h1>
+      <p class="sub">demo10 · bản 2D offline · chơi trên trình duyệt</p>
+      <div id="slots"></div>
+      <div id="create" hidden></div>
+      <p class="credit">Art: <a href="https://github.com/flareteam/flare-game" target="_blank" rel="noopener">Flare — Empyrean Campaign</a> (CC-BY-SA 3.0). Đây là bản học tập phi thương mại, không liên quan Kingsoft/VNG.</p>
+    </div>
+  </div>
+
+  <div id="loading" hidden><div class="ld-txt" id="ld-txt">Đang tải…</div><div class="ld-bar"><i id="ld-fill"></i></div></div>
+
+  <!-- HUD -->
+  <div id="hud" hidden>
+    <div id="me" class="frame">
+      <img id="me-face" alt="">
+      <div class="me-info">
+        <div class="me-name"><b id="me-name"></b> <span id="me-lv"></span></div>
+        <div class="me-sub" id="me-sub"></div>
+        <div class="bar hp"><i id="hp-fill"></i><span id="hp-txt"></span></div>
+        <div class="bar mp"><i id="mp-fill"></i><span id="mp-txt"></span></div>
+      </div>
+      <div id="buffs"></div>
+    </div>
+
+    <div id="target" class="frame" hidden>
+      <div class="tg-name" id="tg-name"></div>
+      <div class="bar hp"><i id="tg-fill"></i><span id="tg-txt"></span></div>
+    </div>
+
+    <div id="mini" class="frame">
+      <div class="mini-head"><b id="map-name"></b><span id="map-pos"></span></div>
+      <canvas id="mini-c" width="200" height="140"></canvas>
+    </div>
+
+    <div id="log" class="frame"><div id="log-list"></div></div>
+
+    <div id="dock" class="frame">
+      <button class="slot sk" id="sk-left" title="Skill chuột trái (bấm để đổi)"><span class="ic"></span><kbd>Trái</kbd></button>
+      <button class="slot sk" id="sk-right" title="Skill chuột phải (bấm để đổi)"><span class="ic"></span><span class="cd"></span><kbd>Phải</kbd></button>
+      <span class="sep"></span>
+      <button class="slot pot" id="pot-1" title="Thuốc hồi sinh lực"><span class="ic"></span><kbd>1</kbd><em></em></button>
+      <button class="slot pot" id="pot-2" title="Thuốc hồi nội lực"><span class="ic"></span><kbd>2</kbd><em></em></button>
+      <button class="slot pot" id="pot-3" title="Thổ Địa Phù — về thành"><span class="ic"></span><kbd>3</kbd><em></em></button>
+      <span class="sep"></span>
+      <button class="auto" id="b-auto" title="Bật/tắt auto train (phím Z)"><b>AUTO</b><small>Z</small></button>
+      <button class="mini-btn" id="b-auto-cfg" title="Cài đặt auto">⚙</button>
+      <span class="sep"></span>
+      <div class="menu-btns">
+        <button data-panel="char" title="Nhân vật (F3 / C)">Nhân vật</button>
+        <button data-panel="inv" title="Hành trang (F4 / I)">Hành trang</button>
+        <button data-panel="skills" title="Võ công (F5 / K)">Võ công <i id="skill-dot" hidden></i></button>
+        <button data-panel="quests" title="Nhiệm vụ (Q)">Nhiệm vụ</button>
+        <button data-panel="menu" title="Hệ thống (Esc)">Hệ thống</button>
+      </div>
+      <div class="xp"><i id="xp-fill"></i><span id="xp-txt"></span></div>
+    </div>
+
+    <div id="track"></div>
+    <div id="banner"></div>
+    <div id="toasts" aria-live="polite"></div>
+  </div>
+
+  <!-- panel dùng chung: nội dung do src/ui/panels.js dựng -->
+  <div id="panels"></div>
+  <div id="tip" hidden></div>
+  <div id="bigmap" hidden><div class="frame"><div class="bm-head"><b id="bm-name"></b><span>Tab để đóng</span></div><canvas id="bm-c"></canvas></div></div>
+
+  <script type="module" src="./src/main.js"></script>
+</body>
+</html>

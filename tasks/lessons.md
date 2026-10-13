@@ -22,3 +22,7 @@
 - **Renderer Compatibility (Web):** `blend_add` không nhân ALPHA. Shader cộng sáng phải tự nhân `ALBEDO *= a`; ramp màu của hạt phải fade về đen chứ không chỉ alpha 0.
 - **GDScript:** `var x := dict.key` lỗi "Cannot infer type" vì Variant. Dùng `=` hoặc khai kiểu rõ. Lambda nhiều dòng nằm trong array/dict hay vỡ indent, nên tách ra biến local trước. `queue_free` con cũ rồi `get_child(0)` vẫn trả con cũ trong cùng frame, phải `remove_child` trước.
 - **Verify hình khi không có GPU:** `xvfb-run godot --rendering-driver opengl3` + `get_viewport().get_texture().get_image().save_png()` chụp được ảnh thật bằng llvmpipe. Cách này không phải browser, và bắt được 6 lỗi hình mà selftest headless không thấy.
+
+## 2026-10-13 · Clone game 2D mà đề xuất 3D (demo10 VLTK1)
+- Sai: anh muốn "clone như VLTK1", em lấy gu 3D stylized trong memory đè lên, đề xuất Three.js + model 3D. Anh sửa: "game VLTK1 2009, k phai 3d".
+- Rule: yêu cầu clone game cụ thể thì giữ đúng **dạng hình của bản gốc** (2D / 2.5D sprite / 3D). Gu art chung chỉ dùng để chọn asset **trong** dạng hình đó. 2.5D sprite render sẵn (như Flare demo5) không tính là pixel hay vẽ tay.

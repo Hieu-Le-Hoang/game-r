@@ -1,0 +1,4 @@
+_raw/
+.vercel
+.env*
+__pycache__/
