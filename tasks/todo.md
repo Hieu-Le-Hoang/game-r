@@ -1,3 +1,18 @@
+# demo5 — rà soát + fix đứng game (2026-10-13) · XONG, CHỜ ANH TEST TAY · https://wcg-game-r-demo5.vercel.app
+
+Anh yêu cầu: rà soát demo5 đã chạy được chưa, deploy, cho link test. Anh duyệt plan "làm đi".
+
+- [x] Live trước khi sửa = bản build HEAD (cùng hash `index-i-b-hn5w.js`)
+- [x] Smoke headless `demo5/tools/smoke.mjs` (theo cách demo11) bắt bug: quái chết 10.5s sau bị `destroy()` nhưng vẫn nằm trong `enemies` -> `updateEnemies` gọi `setTexture` lên ảnh đã destroy -> lỗi trong RAF, Phaser không lên frame mới -> **game đứng ~10s sau con quái đầu tiên**. Bug có từ bản Phaser 3 (`be6de2e`)
+- [x] Fix `main.js` `killEnemy`: splice quái khỏi `enemies` khi tween mờ xong. Smoke: bản cũ FAIL, bản sửa OK 17 checks (quest -> farm -> skill -> loot -> hạ Morvak -> nhận thưởng -> hành trang -> chết)
+- [x] Deploy prod `wcg-game-r-demo5` -> bundle `index-VLQYOdC0.js` có fix, asset 200, `.env.local` 404
+- [ ] Anh test tay trên browser
+
+## Review / còn treo
+- Làm trong git worktree từ HEAD vì working tree demo5 đang có bản viết lại dở của session khác (`main.js` rỗng). Phần đó **chưa đụng**, chờ anh chọn stash hay restore
+- `demo5/node_modules` ở working tree chính đang là Phaser 3.90 (lệch package.json 4.2.1) -> cần `npm ci`
+- Git integration Vercel của `wcg-game-r-demo5` build lỗi mỗi lần push (`vite: command not found`), không ảnh hưởng live. Vercel project `demo5` riêng (tạo 2026-10-13) đang host bản viết lại dở
+
 # demo11 — Lục Địa MU, nhái MU Online trên Phaser 4 (2026-10-13) · XONG MVP, CHỜ ANH TEST TAY
 
 Plan: [demo11/PLAN.md](../demo11/PLAN.md). Anh chốt: mục tiêu A/B = "Phaser 4 có chịu được đông quái + nhiều FX không", gameplay = farm + cộng điểm + ép đồ + Golden Invasion/boss, class DK + DW ("tạm k build elf"), engine Phaser 4. Live: https://wcg-game-r-demo11.vercel.app

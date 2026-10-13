@@ -466,7 +466,8 @@ class Game extends Phaser.Scene {
     if (rnd() < 0.55 || u.d.boss) this.after(0.1, () => this.dropGold(u.x, u.y, rint(4, 14) * (u.d.boss ? 10 : 1)));
     if (u.d.boss) { UI.target(null); UI.banner('Morvak đã gục ngã', 'Hầm mộ đã yên'); this.shake = 0.8; if (S.quest === 1) { S.quest = 2; UI.quest(); } }
     else UI.target(null);
-    this.after(9, () => this.tweens.add({ targets: [u.img, u.shadow], alpha: 0, duration: 1500, onComplete: () => { u.img.destroy(); u.shadow.destroy(); } }));
+    // xác mờ dần rồi bỏ khỏi `enemies`, nếu không updateEnemies sẽ setTexture lên ảnh đã destroy -> lỗi làm đứng game loop
+    this.after(9, () => this.tweens.add({ targets: [u.img, u.shadow], alpha: 0, duration: 1500, onComplete: () => { u.img.destroy(); u.shadow.destroy(); this.enemies.splice(this.enemies.indexOf(u), 1); } }));
   }
   hurtHero(d) {
     const h = this.hero;
