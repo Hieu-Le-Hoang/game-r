@@ -1,7 +1,8 @@
-# Glossary — Thuật ngữ build game ARPG trên web (qua 6 demo)
+# Glossary — Thuật ngữ build game trên web
 
-> Sổ tay tra cứu khi học. Mỗi thuật ngữ: giải thích ngắn + gặp ở demo nào.
-> Cập nhật: 2026-10-10 · Phạm vi: demo1 -> demo6 + docs/, tasks/, review đồ họa.
+> Sổ tay tra cứu khi học. Mỗi thuật ngữ: giải thích ngắn + gặp ở demo nào (cột **Demo** ghi số demo).
+> Danh sách demo, engine, art, link live: xem [README.md](README.md#các-demo).
+> Cập nhật: 2026-10-13 · Phạm vi: các demo + docs/, tasks/, review đồ họa.
 
 ## Bản đồ tổng quan
 
@@ -11,6 +12,7 @@ mindmap
     Engine / Lib
       Phaser 2D
       Three.js 3D
+      Unity / Godot WASM
       Vite build
     Asset
       Pack: KayKit, Quaternius, Kenney, Flare, Poly Haven, Mixamo, VRoid
@@ -32,18 +34,7 @@ mindmap
       CC-BY-SA
 ```
 
-Mỗi game đi qua cùng 1 pipeline: **lấy asset -> tối ưu bằng tool -> load vào engine -> render + gameplay -> build bằng Vite**.
-
-## Các demo tóm tắt
-
-| Demo | Thể loại | 2D/3D | Engine | Art |
-|---|---|---|---|---|
-| demo1 | Roguelike ARPG top-down | 2D | Phaser 3 (CDN, 1 file HTML) | Kenney Tiny Dungeon |
-| demo2 | ARPG "Hầm Mộ Vua Xương" | 3D | Three.js | KayKit |
-| demo3 | Cùng game, đổi art | 3D | Three.js | Quaternius |
-| demo4 | Dark fantasy kiểu Diablo 4 | 3D | Three.js + N8AO | Poly Haven (PBR) + Quaternius, Mixamo (dự kiến) |
-| demo5 | ARPG isometric "Hầm Mộ Ardwen" | 2D | Phaser 4 (npm) | Flare |
-| demo6 | Anime kiểu Genshin | 3D | Three.js + three-vrm | VRoid + Quaternius UAL |
+Mỗi game đi qua cùng 1 pipeline: **lấy asset -> tối ưu bằng tool -> load vào engine -> render + gameplay -> build** (pipeline chi tiết và ngoại lệ Unity/Godot: xem README).
 
 ---
 
@@ -59,7 +50,12 @@ Mỗi game đi qua cùng 1 pipeline: **lấy asset -> tối ưu bằng tool -> l
 | **three/addons** | Các module phụ của Three.js: `GLTFLoader`, `SkeletonUtils`, `EffectComposer`, `BufferGeometryUtils`... | 2, 3, 4, 6 |
 | **N8AO** | Lib SSAO (ambient occlusion) chất lượng cao cho Three.js. | 4 |
 | **@pixiv/three-vrm** | Plugin load model VRM (avatar anime) vào Three.js, hỗ trợ expression, spring bone, MToon. | 6 |
-| **Unity / Unreal / Godot / Roblox** | Các engine lớn, có editor. Nhắc trong research để so sánh, các demo không dùng. | docs |
+| **Unity / Unreal / Godot / Roblox** | Các engine lớn, có editor. demo7 dùng Unity, demo8 dùng Godot để so với bản Three.js (demo2); Unreal / Roblox chỉ nhắc trong research. | 7, 8, docs |
+| **URP (Universal Render Pipeline)** | Pipeline render "nhẹ" của Unity, chạy được cả mobile lẫn WebGL. Cấu hình bằng asset (`PC_RPAsset`, `Mobile_RPAsset`): HDR, shadow, số đèn mỗi object... | 7 |
+| **Volume (Unity)** | Cách URP gắn post-processing: một Volume chứa profile gồm Bloom, Tonemapping, Vignette... `isGlobal` = áp cho cả màn. | 7 |
+| **uGUI** | Hệ UI "cũ" mà ổn định của Unity: Canvas + RectTransform + Image/Text/Button. demo7 dựng toàn bộ HUD bằng code thay vì prefab. | 7 |
+| **Legacy Animation** | Kiểu animation cũ của Unity: gọi clip theo tên (`Animation.CrossFade("Idle")`), khỏi dựng Animator Controller. Hợp với agent vì giống AnimationMixer của three.js. | 7 |
+| **MCP for Unity** | Plugin (CoplayDev, MIT) mở MCP server trong Unity Editor để AI agent đọc console, bấm play, sửa scene/prefab. Editor phải đang mở. | 7 |
 
 ## 2. Asset & Format
 
@@ -140,7 +136,7 @@ Mỗi game đi qua cùng 1 pipeline: **lấy asset -> tối ưu bằng tool -> l
 | **Spring bone** | Xương "lò xo" mô phỏng vật lý cho tóc, váy, đuôi... đung đưa tự nhiên. | 6 |
 | **Morph target / Blendshape** | Biến dạng mesh theo hình mẫu có sẵn — dùng cho biểu cảm mặt (blink, joy, angry). | 6 |
 | **8-direction sprite** | Nhân vật 2D vẽ sẵn 8 hướng nhìn, mỗi hướng một bộ frame. | 5 |
-| **Paper-doll** | Ghép nhân vật 2D từ nhiều lớp sprite (thân, giáp, mũ, vũ khí) -> đổi trang bị là đổi hình. | 5 |
+| **Paper-doll** | Ghép nhân vật 2D từ nhiều lớp sprite (thân, giáp, mũ, vũ khí) -> đổi trang bị là đổi hình. | 5, 11 |
 | **Tween** | Animation nội suy giá trị (vị trí, scale, alpha) từ A -> B theo thời gian, không cần frame vẽ sẵn. | tất cả |
 
 ## 4. Rendering (đồ họa)
@@ -157,6 +153,9 @@ Mỗi game đi qua cùng 1 pipeline: **lấy asset -> tối ưu bằng tool -> l
 | **iGPU budget** | Ngân sách ms/frame tính cho GPU tích hợp (laptop yếu) — chuẩn tối thiểu để game mượt. | tasks |
 | **DPR (Device Pixel Ratio)** | Tỉ lệ pixel thật / pixel CSS. Màn retina DPR=2 -> phải vẽ gấp 4 pixel. Thường giới hạn để giữ FPS. | 2, 3, 4, 6 |
 | **Dynamic quality** | Tự hạ chất lượng (tắt bloom, giảm DPR) khi FPS thấp. | 2, 3, 4, 6 |
+| **Culling** | Không vẽ / không cập nhật thứ nằm ngoài camera. demo11 chia nền map thành chunk 8x8 ô, quái ngoài màn hình thì ẩn sprite. | 11 |
+| **Blitter (Phaser)** | 1 game object vẽ hàng nghìn "bob" tĩnh cùng 1 texture, rẻ hơn nhiều so với mỗi ô 1 Image. demo11 dùng cho nền map. | 11 |
+| **BitmapText / RetroFont** | Chữ vẽ từ 1 ảnh font có sẵn, không tạo canvas mới mỗi lần đổi chữ như Text thường -> hợp cho số damage bay liên tục. | 11 |
 
 ### 4.2 Camera & góc nhìn
 
@@ -238,6 +237,12 @@ Mỗi game đi qua cùng 1 pipeline: **lấy asset -> tối ưu bằng tool -> l
 | **Procedural generation** | Sinh map tự động bằng thuật toán, mỗi lần chơi khác nhau. | 1 |
 | **Seeded PRNG** | Bộ sinh số ngẫu nhiên có seed: cùng seed -> cùng kết quả (dễ debug, chia sẻ map). VD `mulberry32`. | 1 |
 | **Object pool** | Tạo sẵn object rồi tái sử dụng thay vì tạo/xóa liên tục -> tránh giật do garbage collection. | 6 |
+| **Flow field** | Tính 1 lần bản đồ khoảng cách từ hero tới mọi ô (BFS), mọi quái chỉ cần đi xuống dốc -> hàng trăm quái đuổi theo mà không phải chạy A* từng con. | 11 |
+| **Spatial hash** | Chia map thành ô lưới, mỗi ô giữ danh sách quái trong đó -> tìm quái gần (AoE, va chạm, tách bầy) chỉ xét vài ô thay vì cả danh sách. | 11 |
+| **AI LOD** | Quái ở xa và đang rảnh thì "nghĩ" thưa hơn (1/4 số frame) để tiết kiệm CPU. | 11 |
+| **Safe zone** | Vùng an toàn trong thị trấn: quái không vào, hồi máu nhanh, hồi sinh ở đây (kiểu MU). | 11 |
+| **Respawn** | Quái chết xong hồi sinh lại ở bãi cũ sau vài giây, để farm liên tục (MU: ~10 giây). | 11 |
+| **Headless smoke test** | Chạy game thật không có màn hình (Phaser HEADLESS + jsdom), bot tự chơi để bắt lỗi runtime mà build không thấy. | 11 |
 | **Input: click-to-move / virtual joystick** | Điều khiển bằng click chuột kiểu Diablo, hoặc joystick ảo trên mobile. | 2-6 |
 
 ### 5.2 Combat & cảm giác (game feel)
@@ -271,6 +276,11 @@ Mỗi game đi qua cùng 1 pipeline: **lấy asset -> tối ưu bằng tool -> l
 | **Loot beam** | Cột sáng màu đánh dấu đồ hiếm rơi trên đất. | 2, 3, 4, 6 |
 | **XP / Level up** | Kinh nghiệm và lên cấp. | tất cả |
 | **Balancing** | Cân bằng chỉ số để game không quá dễ/khó. | docs |
+| **Stat point** | Điểm cộng tay vào chỉ số khi lên cấp (MU: 5 điểm/cấp vào Sức mạnh / Nhanh nhẹn / Thể lực / Năng lượng). | 11 |
+| **Ép đồ (+N) / Jewel** | Nâng cấp đồ bằng ngọc: Ngọc Ước Nguyện (Bless) +0 -> +6 luôn thành công, Ngọc Tâm Linh (Soul) +6 -> +9 có tỉ lệ, thất bại về +0. | 11 |
+| **Excellent item** | Đồ hiếm tên xanh lá của MU, có thêm 1-2 dòng chỉ số đặc biệt. | 11 |
+| **Luck** | Thuộc tính May Mắn trên đồ: tăng chí mạng và tăng tỉ lệ ép ngọc thành công. | 11 |
+| **Golden Invasion** | Sự kiện MU: quái vàng xuất hiện hàng loạt quanh map, bị đánh thì bỏ chạy, rơi Hộp Kundun. | 11 |
 
 ## 6. Tooling & Build
 
@@ -284,11 +294,15 @@ Mỗi game đi qua cùng 1 pipeline: **lấy asset -> tối ưu bằng tool -> l
 | **meshoptimizer** | Thư viện tối ưu + nén mesh. | 4 |
 | **sharp** | Lib Node xử lý ảnh nhanh (resize, convert sang WebP). | 4, 6 |
 | **obj2gltf** | Tool convert OBJ -> glTF/GLB. | 3 |
-| **Pillow (PIL)** | Lib xử lý ảnh của Python, dùng repack sprite atlas. | 5 |
+| **Pillow (PIL)** | Lib xử lý ảnh của Python, dùng repack sprite atlas. | 5, 11 |
 | **Vertical slice** | Bản demo nhỏ nhưng làm "đủ chất" mọi khâu (art, gameplay, UI) cho 1 đoạn ngắn — để chứng minh hướng đi. | tasks |
 | **A/B comparison** | So sánh 2 phương án cạnh nhau để chọn. | tasks |
 | **Playwright / Chrome DevTools** | Tự động mở browser để test game, đo hiệu năng. | tasks, docs |
 | **Vercel / Netlify / itch.io** | Nơi deploy / phát hành game web. | tasks, docs |
+| **Batchmode (Unity)** | Chạy Unity không giao diện: `Unity.exe -batchmode -executeMethod X` (setup, build) hoặc `-runTests` (test). Cách để agent tự build/test không cần mở Editor. | 7 |
+| **IL2CPP** | Unity dịch C# sang C++ rồi Emscripten biên dịch ra WebAssembly khi build WebGL. Build lần đầu rất lâu (vài chục phút) vì phải compile C++. | 7 |
+| **PlayMode test** | Test của Unity Test Framework chạy game thật trong play mode. demo7 dùng nó làm "bot" chơi hết màn + chụp ảnh, mọi exception đều làm test fail. | 7 |
+| **Decompression fallback** | Tuỳ chọn build WebGL: file nén gzip tự giải bằng JS trong browser, nên host tĩnh (Vercel) không cần cấu hình header `Content-Encoding`. Đổi lại tải chậm hơn chút. | 7 |
 
 ## 7. License
 

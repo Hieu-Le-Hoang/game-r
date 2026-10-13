@@ -26,3 +26,20 @@
 ## 2026-10-13 · Clone game 2D mà đề xuất 3D (demo10 VLTK1)
 - Sai: anh muốn "clone như VLTK1", em lấy gu 3D stylized trong memory đè lên, đề xuất Three.js + model 3D. Anh sửa: "game VLTK1 2009, k phai 3d".
 - Rule: yêu cầu clone game cụ thể thì giữ đúng **dạng hình của bản gốc** (2D / 2.5D sprite / 3D). Gu art chung chỉ dùng để chọn asset **trong** dạng hình đó. 2.5D sprite render sẵn (như Flare demo5) không tính là pixel hay vẽ tay.
+
+## 2026-10-13 · Plan game mới thiếu bước Gameplay
+- Sai: anh hỏi "bắt đầu game mới cần plan gì", em liệt kê mục tiêu -> scope -> engine -> art -> budget -> verify -> deploy, gameplay chỉ lướt qua 1 dòng "core loop". Do các demo trước chủ yếu A/B engine/art trên cùng gameplay demo2.
+- Rule: plan game mới luôn có bước **Gameplay** riêng (core loop 3 tầng, verbs/controls/camera, game feel, enemy/boss, progression, tiêu chí "vui"), đặt NGAY SAU mục tiêu và TRƯỚC engine/art — vì gameplay quyết định engine cần gì. Chỉ đi tắt khi demo là bản port giữ nguyên gameplay.
+- Không gray-box, không ghi scope: lần build đầu mặc định là MVP (vừa đủ chơi hết 1 vòng core loop).
+- Template `docs/new-game-plan.md` không có mục Budget/Verify: anh để agent tự quyết hiệu năng và cách verify khi làm, plan chỉ giữ những gì anh cần duyệt (mục tiêu, gameplay, engine, asset, deploy).
+
+## 2026-10-13 · Phaser 4: smoke test headless thay cho mở browser (demo11)
+- Cách làm: `demo11/tools/smoke.mjs`. jsdom + `Phaser.HEADLESS` + `game.loop.sleep()` rồi tự gọi `game.headlessStep(t, dt)`. Bot giả lập người chơi đi hết core loop, mọi exception đều làm test fail. Bắt được 3 bug runtime mà `vite build` không thấy.
+- Các chỗ phải vá để chạy được: (1) loader gắn method `json/image/audio` lên **từng instance** (FileTypesManager), nên phải vá trong `preload` chứ không vá prototype; ảnh thì tạo canvas đúng kích thước đọc từ header WebP. (2) `TextureSource.update` vẫn đọc `renderer.gl` dù đang HEADLESS -> bỏ qua khi renderer null. (3) Canvas 2D giả phải trả `measureText().width` là số và `getImageData().data` là mảng thật, proxy no-op làm Text crash. (4) Globals cần thêm: `screen`, `XMLHttpRequest`, `matchMedia`; ảnh base64 mặc định của Phaser phải tự gọi `onload`.
+- Bẫy: có `process.on('uncaughtException')` mà không in ra thì lỗi ở top-level await bị nuốt, Node thoát **mã 0 không in gì**. Handler luôn phải log lỗi.
+- Code game: dùng `this.renderer?.gl` và chỉ tạo RenderTexture khi có renderer, để cùng một code chạy được cả browser lẫn headless.
+
+## 2026-10-13 · Phaser `scene.restart()` dùng lại instance cũ (demo11)
+- Sai: đổi map bằng `scene.restart({ map })`, cờ `this.leaving` của lần qua cổng trước vẫn còn, nên chết trong Dungeon thì lệnh về Lorencia bị bỏ qua và hero kẹt mãi ở trạng thái chết. `create()` chỉ gán lại field nào nó đụng tới.
+- Rule: field nào của scene sống qua một lần map (`leaving`, `boss`, `dark`, `bench`, `fx`, `hover`...) thì reset hết trong `init()`. Keyboard và listener input thì Phaser 4 tự dọn khi shutdown (`removeAllKeys(true)`), không cần lo.
+- Kiểm đường thẳng cho nhân vật có thân: `lineFree` chỉ xét đường tâm, nên nhân vật đi sượt góc tường là kẹt (đứng chạy tại chỗ). Dùng 3 đường song song cách nhau bằng bán kính thân (`lineFreeR`), và khi trượt không nhích được nữa thì tìm lại đường / chuyển sang flow field.

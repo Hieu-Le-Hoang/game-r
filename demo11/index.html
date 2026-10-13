@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+  <title>Lục Địa MU</title>
+  <meta name="description" content="ARPG isometric 2D nhái MU Online: farm Lorencia, ép đồ +9, Golden Invasion, boss Gorgon. Phaser 4, art Flare (CC-BY-SA 3.0) — game-r demo11">
+  <link rel="icon" type="image/webp" href="./a/portraits/male01.webp">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Be+Vietnam+Pro:wght@400;500;600;800&display=swap">
+</head>
+<body>
+  <div id="app"></div>
+
+  <!-- HUD dưới: cầu máu, thanh skill + bình, cầu mana -->
+  <div id="hud">
+    <div class="orb hp" title="Máu"><i id="hp-fill"></i><b id="hp-txt"></b></div>
+    <div class="belt">
+      <div class="xp" title="Kinh nghiệm"><i id="xp-fill"></i><span id="xp-txt"></span></div>
+      <div class="bar">
+        <div id="skills" class="skills"></div>
+        <div class="pots">
+          <button class="sk pot" id="pot-hp" aria-label="Bình máu"><span class="vial red"></span><kbd>Q</kbd><em>0</em></button>
+          <button class="sk pot" id="pot-mp" aria-label="Bình mana"><span class="vial blue"></span><kbd>W</kbd><em>0</em></button>
+        </div>
+      </div>
+      <div class="rmb">Chuột phải: <b id="rmb"></b> · phím 1-3 đổi skill</div>
+    </div>
+    <div class="orb mp" title="Mana"><i id="mp-fill"></i><b id="mp-txt"></b></div>
+  </div>
+
+  <div id="top">
+    <div class="who-tag">
+      <div><span id="cls"></span> · Cấp <b id="lvl">1</b> · <span id="zen">0</span> Zen</div>
+      <div class="map" id="map"></div>
+    </div>
+    <div class="top-r">
+      <div id="perf" title="Đo hiệu năng: FPS, 1% low (khung chậm nhất), số quái, số object đang vẽ"></div>
+      <div class="btns">
+        <button class="ghost" id="b-char">Nhân vật <kbd>C</kbd> <b></b></button>
+        <button class="ghost" id="b-inv">Túi đồ <kbd>V</kbd></button>
+      </div>
+    </div>
+  </div>
+  <div id="target" hidden><div class="tg-name" id="tg-name"></div><div class="tg-bar"><i id="tg-fill"></i></div></div>
+  <div id="quest"></div>
+  <div id="banner"></div>
+  <div id="toasts" aria-live="polite"></div>
+  <div id="tip" hidden></div>
+  <div class="hint" id="hint">Click trái: đi / đánh / nhặt · giữ <b>chuột phải</b>: dùng skill · <b>1-3</b> đổi skill · <b>Q/W</b> bình máu/mana · <b>C</b> nhân vật · <b>V</b> túi đồ · <b>Space</b> nhặt đồ</div>
+
+  <div class="modal" id="dialog" hidden>
+    <div class="dlg stone">
+      <img class="dlg-face" id="dlg-face" alt="">
+      <div class="dlg-body">
+        <div class="dlg-name" id="dlg-name"></div>
+        <p class="dlg-text" id="dlg-text"></p>
+        <div class="dlg-acts" id="dlg-acts"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal center" id="char" hidden>
+    <div class="panel stone narrow" role="dialog" aria-label="Nhân vật">
+      <div class="panel-head"><h2>Nhân Vật</h2><button class="x" data-close aria-label="Đóng">✕</button></div>
+      <div id="char-body"></div>
+    </div>
+  </div>
+
+  <div class="modal center" id="inv" hidden>
+    <div class="panel stone" role="dialog" aria-label="Túi đồ">
+      <div class="panel-head"><h2>Túi Đồ</h2><button class="x" data-close aria-label="Đóng">✕</button></div>
+      <div class="inv">
+        <div class="doll" id="doll"></div>
+        <div class="detail" id="detail"></div>
+      </div>
+      <div class="grid" id="bag"></div>
+      <div class="inv-foot" id="inv-foot"></div>
+      <div class="sub tipline">Kéo <b>Ngọc Ước Nguyện</b> / <b>Ngọc Tâm Linh</b> thả lên món đồ để ép. Double-click để mặc/tháo.</div>
+    </div>
+  </div>
+
+  <div class="modal center" id="result" hidden>
+    <div class="panel stone narrow" role="dialog" aria-label="Kết quả">
+      <div class="panel-head"><h2 id="res-title"></h2><button class="x" data-close aria-label="Đóng">✕</button></div>
+      <div id="res-body"></div>
+    </div>
+  </div>
+
+  <div id="select" hidden>
+    <div class="sel-title">Lục Địa MU</div>
+    <div class="sel-sub">Chọn nhân vật</div>
+    <div class="cards">
+      <button class="card" data-cls="dk"><img src="./a/portraits/male01.webp" alt=""><b>Dark Knight</b><span>Cận chiến, máu trâu. Xoáy Kiếm dọn cả bầy, Nộ Long Phá ở cấp 8.</span></button>
+      <button class="card" data-cls="dw"><img src="./a/portraits/male03.webp" alt=""><b>Dark Wizard</b><span>Phép xa, máu giấy. Thiên Thạch, Dịch Chuyển ở cấp 3, Evil Spirit ở cấp 6.</span></button>
+      <div class="card off"><div class="ph">?</div><b>Fairy Elf</b><span>Sắp có.</span></div>
+    </div>
+    <div class="sel-foot">Art: Flare – Empyrean Campaign (CC-BY-SA 3.0) · đo hiệu năng: thêm <code>?bench=300&amp;auto</code> vào URL</div>
+  </div>
+
+  <div id="loading">
+    <div class="ld-title">Lục Địa MU</div>
+    <div class="ld-bar"><i id="ld-fill"></i></div>
+    <div class="ld-txt" id="ld-txt">Đang tải…</div>
+    <div class="ld-credit">Art: Flare – Empyrean Campaign (CC-BY-SA 3.0)</div>
+  </div>
+
+  <script type="module" src="./src/main.js"></script>
+</body>
+</html>

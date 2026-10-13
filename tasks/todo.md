@@ -1,3 +1,43 @@
+# demo11 — Lục Địa MU, nhái MU Online trên Phaser 4 (2026-10-13) · XONG MVP, CHỜ ANH TEST TAY
+
+Plan: [demo11/PLAN.md](../demo11/PLAN.md). Anh chốt: mục tiêu A/B = "Phaser 4 có chịu được đông quái + nhiều FX không", gameplay = farm + cộng điểm + ép đồ + Golden Invasion/boss, class DK + DW ("tạm k build elf"), engine Phaser 4. Live: https://wcg-game-r-demo11.vercel.app
+
+## 0. Asset
+- [x] Sparse clone `flareteam/flare-game` vào scratchpad (chỉ hero/enemies/tilesets/powers/loot/icons/sfx/maps)
+- [x] `tools/build_assets.py` (dựa trên demo5): tileset nhiều ảnh, atlas tile chia trang ≤4096px, hero 50 layer (thân mặc định + giáp da/xích/tấm + vải + pháp sư 3 màu, 8 vũ khí, 3 khiên), 8 sprite quái, 35 âm thanh
+- [x] Map: Lorencia = Black Oak City (100x100, 181 tile, vành đai đường quanh hồ), Dungeon = Family Crypt (giống demo5)
+- [x] Wyvern gốc cho atlas cao 4665px, nên scale 0.5 cho dưới 4096. Tổng `public/a` 25MB, hero layer lazy-load
+
+## 1. Gameplay
+- [x] Chọn class DK / DW (Elf để "Sắp có"). Stat STR/AGI/VIT/ENE kiểu MU, 5 điểm/cấp, bảng C có nút + (Shift +10)
+- [x] Skill: DK Xoáy Kiếm (Twisting Slash), Nộ Long Phá (Rageful Blow, cấp 8). DW Thiên Thạch (Meteor), Dịch Chuyển (cấp 3), Evil Spirit (cấp 6, 8 luồng xoáy xuyên quái). Chuột phải giữ = xả liên tục, 1-3 đổi skill
+- [x] 8 loại quái Lorencia + 5 loại Dungeon, mỗi loại 1 hành vi (bầy, cắn rồi lùi, bắn xa, đi xuyên tường, chạy trốn). Nhóm spawn xếp cấp theo khoảng cách đi bộ từ thị trấn. Hồi sinh sau 10 giây
+- [x] Thị trấn = vùng an toàn, NPC Amy (bình máu/mana), Hanzo (mua đồ, "bán hết đồ thường")
+- [x] Đồ: 11 vũ khí/khiên + 7 bộ giáp theo class, +0..+9, Luck, Excellent (xanh lá). Ngọc Ước Nguyện +0→+6, Ngọc Tâm Linh +6→+9 (50%, Luck 75%, fail về +0). Kéo thả ngọc lên đồ trong túi V
+- [x] Đồ +7/+8/+9 phát sáng trên người (Glow filter từng layer paperdoll, +9 thêm sao lấp lánh)
+- [x] Golden Invasion: phút 4 rồi mỗi 8 phút, 36 quái vàng quanh hero, bị đánh thì chạy, rơi Hộp Kundun (Zen + ngọc + đồ Excellent)
+- [x] Cổng Dungeon phía tây (cần cấp 15). Boss Gorgon: dậm AoE có vòng đỏ báo trước, máu < 50% thì gọi 6 đệ tử + đánh nhanh hơn. Hạ xong hiện bảng chiến thắng
+- [x] Chết: mất 3% EXP cấp + 5% Zen, hồi sinh ở Lorencia
+
+## 2. Hiệu năng (phần A/B)
+- [x] Nền map = 1 Blitter chia chunk 8x8, ẩn chunk ngoài camera. Object map (cây, nhà) ẩn theo chunk
+- [x] Quái: 1 flow field (BFS từ hero, bán kính 26 ô) dùng chung, spatial hash cho tách bầy/AoE/đạn, ẩn sprite ngoài màn, quái xa + rảnh nghĩ 1/4 frame
+- [x] Số damage: BitmapText (RetroFont tự vẽ lúc chạy) + pool. FX phép: pool Image
+- [x] HUD góc phải: FPS, 1% low, số quái, số object đang vẽ. `?bench=N&auto` đo 20s rồi in JSON (có nút copy), `?nofx`, `?cls=dw`, `?xp=N`, `?gold` (Golden Invasion sau 20s)
+
+## 3. Verify (không mở browser, theo lessons)
+- [x] `npm run selftest`: 7500 check (ép ngọc đúng tỉ lệ, rơi đồ, chỉ số, A*, flow field, spatial hash, mọi anim/icon/loot tồn tại trong atlas)
+- [x] `tools/smoke.mjs`: Phaser HEADLESS + jsdom chạy scene thật, bot chơi hết vòng Lorencia → Golden Invasion → Dungeon → Gorgon cho cả DK và DW, không lỗi runtime, không rò object
+- [x] `vite build` OK (JS 410KB gzip). Deploy Vercel `wecare2/wcg-game-r-demo11`, curl kiểm tra page + asset đều trả 200
+
+## Review
+- **Logic JS mỗi frame** (headless, chưa tính render, máy dev): 150 quái 1,4ms · 300 quái 2,1ms · 500 quái 2,5ms (p95 ~5ms). Chi phí tăng chậm hơn số quái nhờ culling + AI LOD, nên CPU còn dư nhiều trong 16,7ms. Phần còn chưa đo được là **render** (batch sprite, sort depth ~2.500 object, bloom + glow filter): cần anh mở link `?bench=300&auto` và `?bench=300&auto&nofx` trên máy thật rồi so FPS với demo5.
+- **Smoke test bắt 3 bug mà build không thấy:** (1) chết trong Dungeon thì kẹt mãi ở trạng thái chết, do `scene.restart()` dùng lại instance và cờ `leaving` của lần qua cổng trước vẫn còn; (2) hero/quái đứng chạy tại chỗ vì phép kiểm đường thẳng chỉ xét tâm, đi sượt góc tường là kẹt; (3) Golden Goblin 650 máu quá trâu so với cấp lúc invasion đầu nổ, và DK hết mana quá nhanh. Đã sửa cả 3.
+- **Chờ anh test tay:** game feel (Xoáy Kiếm giữa bầy, số damage, ép +7 phát sáng), tốc độ lên cấp (mặc định chưa tune kỹ, có `?xp=5` để test nhanh), FPS thật ở `?bench=300&auto`.
+- **Chưa làm (ngoài MVP):** Fairy Elf, wings, Chaos/+10 trở lên, minimap, party/PK, nhạc nền.
+
+---
+
 # demo10 — Clone VLTK1 2D (2026-10-13) · XONG, CHỜ ANH TEST TAY · https://wcg-game-r-demo10.vercel.app
 
 Spec chi tiết nằm ở `demo10/gameplay.md`. Những gì đã chốt:
@@ -196,6 +236,104 @@ Mục tiêu:
   - Túi đồ tràn màn hình, boss bar lệch tâm.
 - **So với demo2:** cùng gameplay nhưng bản Web nặng hơn nhiều: ~14.5MB tải (wasm 9.5MB) so với vài MB của Three.js. Code ~3.000 dòng GDScript so với ~1.950 dòng JS+CSS+HTML, vì UI phải dựng bằng Control thay vì HTML/CSS.
 - **Chưa kiểm chứng:** cảm giác điều khiển, FPS và độ sáng trên GPU thật, cảm ứng trên mobile (chưa có joystick ảo như demo2).
+
+---
+
+# demo7 — ARPG 3D trên Unity 6 + MCP (2026-10-12) · XONG, CHỜ ANH TEST TAY
+
+Mục tiêu: dựng lại vertical slice của **demo2** (Quán rượu -> Đại sảnh -> Hầm boss, art KayKit) bằng **Unity 6 LTS (URP)**, build WebGL, deploy Vercel. Dùng cùng art với demo2 để so A/B **engine** (Three.js tự viết vs Unity), không lẫn biến số art. Đây cũng là lần đầu thử quy trình **agent điều khiển editor qua MCP**.
+
+```mermaid
+flowchart LR
+    A[Unity Hub + 6 LTS<br/>cài ở D:\Unity]:::h --> B[Project URP demo7/<br/>+ unity-mcp]:::n
+    B --> C[C# viết dạng text<br/>map ASCII dựng scene bằng code]:::n
+    C --> D[MCP: play mode, đọc console<br/>chỉnh scene/prefab]:::y
+    D --> E[Build WebGL batchmode<br/>deploy Vercel]:::g
+    classDef h fill:#1e3a4a,stroke:#3492AB,color:#fff
+    classDef n fill:#1a2a3a,stroke:#3492AB,color:#aacfdf
+    classDef y fill:#3d2e00,stroke:#ffc107,color:#ffd54f
+    classDef g fill:#1a3a1a,stroke:#4caf50,color:#81c784
+```
+
+Nguyên tắc để agent làm được tốt với Unity (scene là YAML/binary, khó đọc): **scene gần như rỗng, cả level dựng từ code** (map ASCII giống demo2, `LevelBuilder.cs`). Agent sửa logic bằng file `.cs`. MCP chỉ dùng để chạy play mode, đọc log console, chỉnh vài thứ trong editor, không nhồi logic vào scene.
+
+## Quyết định
+| Mục | Chọn | Lý do |
+|---|---|---|
+| Engine | Unity 6 LTS, URP | URP chạy được WebGL, nhẹ với card Intel UHD |
+| MCP | CoplayDev `unity-mcp` (MIT, OpenUPM) | Free, có nút đăng ký Claude Code. Unity AI chính chủ tốn credit, để sau |
+| Art | KayKit Adventurers / Skeletons / Dungeon Remastered, tải **bản FBX gốc** thẳng vào `Assets/Resources/Models/` | Unity đọc FBX trực tiếp. GLB của demo2 đã nén meshopt, Unity phải cài thêm glTFast + meshopt |
+| Animation | **Legacy Animation**, gọi clip theo tên (đổi so với plan: bỏ Animator Controller) | Giống AnimationMixer của demo2, khỏi dựng state machine, port 1:1 được |
+| Input | Input Manager cũ: WASD + chuột, phím giống demo2 (đổi so với plan) | Khỏi thêm package Input System, chạy WebGL ổn |
+| Build | WebGL, nén Gzip + **Decompression Fallback** | Vercel không cần chỉnh header `Content-Encoding` |
+| Git | `.gitignore` Unity chuẩn (bỏ `Library/ Temp/ Logs/ obj/ Builds/ UserSettings/`) | Library nặng vài GB |
+
+## Việc
+### Phase 0 — Môi trường (anh làm phần login)
+- [x] Cài Unity Hub 3.22.2: winget cài bản **MSIX** nên Hub nằm trong `C:\Program Files\WindowsApps\UnityTechnologies.UnityHub_*\app\` (bỏ qua `--location`). Gọi Hub CLI từ terminal VS Code phải bỏ biến `ELECTRON_RUN_AS_NODE` trước, nếu không Hub chạy như Node và báo `Cannot find module '--headless'`
+- [x] ~~Editor 6.6 (6000.6.5f1)~~: installer tự crash `0xC0000005` trên máy này (Hub cài, chạy tay admin, silent, 7-Zip đều fail). Đã gỡ Hub MSIX
+- [x] Cài Hub bản .exe 3.22.2 (anh cài vào `E:\Game\UnityHub\Unity Hub\`), đã đăng nhập. Install path đổi sang `D:\Unity\Editors` bằng CLI
+- [x] Cài **Unity 6000.0.84f1 (6.0 LTS)** + Web Build Support qua Hub CLI: chạy êm, không crash -> lỗi lúc trước là do installer bản 6.6.5f1, không phải do máy
+- [x] License Personal: batchmode chạy được (log `Successfully resolved entitlement details`)
+- [x] `uv` / `uvx` có sẵn (`%LOCALAPPDATA%\hermes\bin`)
+
+### Phase 1 — Khung project + MCP
+- [x] Tạo `demo7/` bằng `-createProject`, chép bộ setting URP (PC/Mobile RPAsset, Renderer, GraphicsSettings, QualitySettings) từ template `3d-cross-platform` có sẵn trong Editor; thêm `.gitignore`, `CREDITS.md`, `Licenses/`
+- [x] `Editor/ProjectSetup.cs`: sinh texture FX, material FX trong `Resources/Fx` (để không bị strip), scene `Main` (1 GameObject), PlayerSettings WebGL
+- [x] Cài `com.coplaydev.unity-mcp` v10.3.0 (git URL), đăng ký Claude Code: `claude mcp add --scope local --transport http UnityMCP http://localhost:8080/mcp` (ở thư mục game-r), `McpAutoStart.cs` bật auto-start server khi mở Editor
+- [ ] Test MCP thật (đọc console, play/stop): cần anh mở Editor 1 lần + khởi động lại Claude Code để nạp server UnityMCP
+- [x] `Editor/BuildScript.cs` + `tools/unity.ps1` (setup / test / build headless)
+
+### Phase 2 — Gameplay (port từ demo2: main.js + items.js + fx.js + ui.js)
+- [x] `Game.World.cs`: map ASCII -> sàn, tường, cột, cửa, prop, 8 đuốc (point light chập chờn), rương, tường mờ dần khi che hero, banner tên khu
+- [x] `Game.Combat.cs`: hero di chuyển (WASD + click), lăn né, combo đánh, Lốc Xoáy / Nova Băng, đổi 3 hero; quái ngủ -> thức, đuổi, đánh, bắn phép; boss có telegraph + shock
+- [x] Combat: chí mạng, hitstop (`Time.timeScale`), knockback, chớp trắng (MaterialPropertyBlock), XP + lên cấp, chết + hồi sinh
+- [x] `Items.cs` + `Game.Loot.cs`: roll đồ 4 độ hiếm + affix + 3 đồ huyền thoại, cột sáng loot, vàng bay về hero, rương mở nắp, trang bị đổi model vũ khí trên tay
+- [x] NPC Brann (ngồi ghế, thỉnh thoảng nói) + Lyra (quest dọn Đại Sảnh, trả thưởng đồ huyền thoại)
+- [x] `Hud.cs` (uGUI dựng bằng code): máu/mana/XP, portrait, minimap, quest, chọn hero, boss bar, banner, toast, nút skill + cooldown, hội thoại, túi đồ (trang bị / bán / uống), số sát thương + thanh máu quái + nhãn loot bám theo thế giới
+- [x] `Thumbs.cs`: chụp icon vũ khí + portrait lúc boot, nền trong suốt bằng difference matting (chụp nền đen + nền trắng)
+- [x] FX: Volume (Bloom + ACES + Vignette), particle CPU 1 draw call (port thuật toán demo2), shock ring, slash, telegraph, orb, loot beam, camera rung
+
+### Phase 3 — Build + so sánh
+- [x] Test PlayMode `PlaythroughTest`: bot chơi hết màn (đổi hero, túi đồ, bình máu, nhận quest, dọn sảnh, trả quest, hạ boss, mở rương) **PASS trong 48s**, không exception; 11 ảnh ở `demo7/Logs/shots/`
+- [x] Build WebGL: thành công, **15.0 MB** (wasm 8.97 + data 5.86 + js 0.13, gzip)
+- [x] Deploy Vercel prod (anh yêu cầu) -> https://wcg-game-r-demo7.vercel.app/ (curl: index, loader, wasm/data/framework `.unityweb` đều 200; `.env.local` do CLI sinh ra trả 404, không bị public). Deploy lại: `cd demo7/Builds/WebGL && vercel deploy --prod --yes --scope wecare2`
+- [x] README + glossary: thêm demo7 (bảng, engine & art, chạy thử, cấu trúc), thuật ngữ URP / Volume / uGUI / Legacy Animation / MCP for Unity / batchmode / IL2CPP / PlayMode test / decompression fallback
+- [ ] Anh test tay trong Editor (mở `demo7/` bằng Hub -> scene Main -> Play) hoặc bản build
+
+## Review
+| Tiêu chí | demo2 (Three.js) | demo7 (Unity 6 URP) | demo8 (Godot, session khác) |
+|---|---|---|---|
+| Dung lượng tải | `dist/` 18 MB thô, ~7.9 MB gzip | 15.0 MB gzip | ~14.5 MB brotli |
+| Code game | 1.651 dòng JS | 2.691 dòng C# + 428 dòng editor/test | — |
+| Build | vài giây (Vite) | **36 phút** build WebGL lần đầu (IL2CPP + Emscripten), lần sau nhanh hơn nhờ cache | — |
+| Test tự động | không | bot PlayMode chơi hết màn + chụp ảnh | selftest |
+
+- Cùng gameplay nhưng C# dài hơn ~60%: phải dựng HUD bằng uGUI từ code (Hud.cs ~550 dòng thay cho HTML/CSS), particle billboard tự viết, quy đổi toạ độ three.js tay phải -> Unity tay trái (`U.P`, `U.Yaw`: lật trục z, yaw = 180° - θ).
+- Agent làm Unity "headless" được trọn vòng: tạo project, import, setup, test, build đều chạy batchmode, không cần mở Editor. MCP chỉ còn là tiện ích khi anh mở Editor.
+- Bẫy gặp phải:
+  - `WaitForEndOfFrame` không bao giờ chạy tiếp trong batchmode -> test treo.
+  - `Object.Destroy` trễ tới cuối frame -> chụp nhiều thumbnail trong 1 frame bị chồng hình, phải dùng `DestroyImmediate`.
+  - Buffer HDR của URP không giữ alpha -> thumbnail nền trong suốt phải chụp 2 lần nền đen/trắng.
+  - `Shader.Find` lúc runtime bị strip khi build -> material FX phải là asset nằm trong `Resources/`.
+  - Installer 6000.6.5f1 crash trên máy này, Hub cài qua winget là bản MSIX lỗi đường dẫn -> dùng 6.0 LTS + Hub .exe.
+- Chưa đo: FPS trên browser (anh test tay), thời gian tải lần đầu. Bản build đang ở chế độ "Shorter Build Time" của WebGL; đổi sang tối ưu Disk Size có thể giảm wasm nhưng build lâu hơn.
+- FBX nhân vật nặng ~20 MB/file (tổng ~121 MB trong `Assets/Resources/Models/Chars`). Trước khi commit nên cân nhắc Git LFS hoặc `.gitignore` + script tải lại.
+
+## Verify (không Playwright, theo lessons)
+- Compile sạch: đọc console qua MCP hoặc log batchmode, không còn error
+- Play mode qua MCP: đi hết 3 khu, giết boss, không exception trong console
+- Build WebGL không lỗi; sau khi deploy, kiểm bằng curl: `index.html` + `.wasm` / `.data` trả 200
+- Phần nhìn bằng mắt (ánh sáng, cảm giác đánh): anh test tay
+
+## Rủi ro
+| Rủi ro | Mức | Cách xử |
+|---|---|---|
+| Intel UHD làm editor chậm, WebGL FPS thấp | Vừa | URP preset thấp, tắt shadow mềm, giới hạn số point light |
+| Build WebGL nặng (khoảng 15-30 MB) | Vừa | Strip engine code, nén texture, ghi số vào Review để so |
+| Bản `unity-mcp` không ổn với Unity 6 mới nhất | Thấp-vừa | Fallback: agent vẫn sửa `.cs` + chạy batchmode, đọc `Editor.log` |
+| KayKit FBX: clip animation tách file / tên khác bản GLB | Thấp | Map clip trong Animator Controller dựng bằng editor script |
+| Ổ C đầy do cache Hub / Unity | Vừa | Chuyển Downloads + cache GI sang D |
 
 ---
 
