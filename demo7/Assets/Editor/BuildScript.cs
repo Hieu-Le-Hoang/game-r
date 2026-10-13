@@ -23,9 +23,21 @@ public static class BuildScript
         };
         var r = BuildPipeline.BuildPlayer(opt);
         var s = r.summary;
+        if (s.result == BuildResult.Succeeded) FullWindow($"{outDir}/index.html");
         long bytes = Directory.GetFiles(outDir, "*", SearchOption.AllDirectories).Sum(f => new FileInfo(f).Length);
         Debug.Log($"BUILD {s.result} in {s.totalTime.TotalSeconds:0}s, {bytes / 1048576f:0.0} MB on disk, {s.totalErrors} errors");
         foreach (var f in Directory.GetFiles(outDir + "/Build")) Debug.Log($"BUILD file {Path.GetFileName(f)} {new FileInfo(f).Length / 1048576f:0.00} MB");
         if (Application.isBatchMode) EditorApplication.Exit(s.result == BuildResult.Succeeded ? 0 : 1);
+    }
+
+    // Template Default của Unity khoá canvas 960x600 trên desktop -> cho tràn cả cửa sổ như bản mobile, ẩn footer
+    static void FullWindow(string index)
+    {
+        var html = File.ReadAllText(index);
+        html = html.Replace("        canvas.style.width = \"960px\";\n        canvas.style.height = \"600px\";",
+            "        document.querySelector(\"#unity-container\").className = \"unity-mobile\";\n        canvas.className = \"unity-mobile\";");
+        if (!html.Contains("overflow:hidden"))
+            html = html.Replace("</head>", "    <style>html,body{height:100%;overflow:hidden;background:#000}</style>\n  </head>");
+        File.WriteAllText(index, html);
     }
 }

@@ -254,7 +254,16 @@ Mục tiêu:
 
 ---
 
-# demo7 — ARPG 3D trên Unity 6 + MCP (2026-10-12) · XONG, CHỜ ANH TEST TAY
+# demo7 — ARPG 3D trên Unity 6 + MCP (2026-10-12) · ĐÃ SỬA ĐEN MÀN HÌNH, CHỜ ANH TEST LẠI
+
+## Việc dở (2026-10-13): bản live đen màn hình
+Anh test https://wcg-game-r-demo7.vercel.app thì đen màn hình. Anh cần chuyển sang new-erp nên tạm dừng.
+- Đã loại trừ: 4 file build trên Vercel trả 200, đúng kích thước với local, gzip giải nén được, wasm hợp lệ. Build 0 lỗi. Scene `Main` gắn đúng script `Game`, cấu hình WebGL bình thường (WebGL2, Linear, memory growth tới 2GB, decompression fallback). Material FX đã là asset trong `Resources/`, nên không dính lỗi strip `Shader.Find`.
+- Nghi phạm chính: `UniversalRenderPipelineGlobalSettings` bật `m_StripUnusedPostProcessingVariants: 1`, trong khi `Game.SetupRender()` tạo VolumeProfile bằng code (Bloom, Tonemapping **ACES**, ColorAdjustments, Vignette). `DefaultVolumeProfile.asset` để Tonemapping = None, Bloom intensity 0. Log build cho thấy UberPost bị strip 1.920 -> 288 variant. Editor/PlayMode test không bị vì Editor có đủ variant.
+- [x] Anh bảo "xem fix luôn": tắt `m_StripUnusedPostProcessingVariants` (3 chỗ trong `UniversalRenderPipelineGlobalSettings.asset`). Build lại 723 giây, 0 lỗi; UberPost giữ 1.440 variant (trước 288)
+- [x] Thêm `Assets/Scripts/ErrorOverlay.cs`: lỗi / exception hiện chữ đỏ góc trên màn game, không cần mở F12
+- [x] Deploy lại https://wcg-game-r-demo7.vercel.app (curl: loader / wasm / data mới đều 200)
+- [ ] Anh test lại. Nếu vẫn đen: chụp màn hình (overlay đỏ sẽ hiện lỗi) rồi sửa theo log, vd exception trong `Start()` / `Thumbs.Build`
 
 Mục tiêu: dựng lại vertical slice của **demo2** (Quán rượu -> Đại sảnh -> Hầm boss, art KayKit) bằng **Unity 6 LTS (URP)**, build WebGL, deploy Vercel. Dùng cùng art với demo2 để so A/B **engine** (Three.js tự viết vs Unity), không lẫn biến số art. Đây cũng là lần đầu thử quy trình **agent điều khiển editor qua MCP**.
 
