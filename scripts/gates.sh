@@ -4,7 +4,7 @@
 #
 # Edit THIS file to fit the project:
 #   · a gate that does not apply, or is red only from old debt -> delete its line, and note it in
-#     PROGRESS.md ("gate X off: reason, re-enable when ...")
+#     TODO.md ("gate X off: reason, re-enable when ...")
 #   · a non-JS project -> add its own gates, e.g.
 #       gate "pytest" pytest -q
 #       gate "ruff"   ruff check .

@@ -19,7 +19,8 @@ else
   echo "git: not a repository yet — run \`git init\`. Until then the custom linters are SKIPPED"
   echo "     (they take their file list from git)."
 fi
-[ -f PROGRESS.md ] && { echo "next (PROGRESS.md):"; head -5 PROGRESS.md; }
+# TODO.md: everything above its first `---` line (title and > notes skipped).
+[ -f TODO.md ] && { echo "todo (TODO.md):"; awk 'NR>1 && /^---$/ {exit} NR>1 && !/^>/ && NF' TODO.md | head -20; }
 echo "gate: run \`sh scripts/verify.sh\` before claiming done — nothing runs it for you."
 echo "      Harness-config edits ask the human for approval; secrets are denied."
 echo "─────────────────────────────────────────────────────"
