@@ -1,5 +1,25 @@
 # game-r
 
+## Mọi thứ nằm ở đâu
+- **Code game**: `demoN/` — mỗi demo là project độc lập (Vite + npm, riêng `package.json`/lockfile). demo1 = 1 file HTML (CDN), demo7 = Unity, demo8 = Godot. Bảng tổng: `README.md`.
+- **Plan từng demo**: file PLAN.md trong folder demo (khuôn: `docs/new-game-plan.md`, skill `new-game`).
+- **Việc đang làm / bài học**: `tasks/todo.md` · `tasks/lessons.md`. Tiến độ ngắn cho SessionStart: `PROGRESS.md`.
+- **Asset thô tải về**: `_inbox/` (gitignore, không commit).
+- **Quyết định**: `decisions/NNNN-*.md` (ADR). Đọc trước khi đổi kiến trúc.
+- **Luật riêng của dự án**: `linters/` — luật viết thành script chạy được.
+- **Danh sách gate**: `scripts/gates.sh`; `scripts/verify.sh` chạy chúng. Gate đang tắt + lý do: `PROGRESS.md`.
+
+## Lệnh
+- `sh scripts/verify.sh` — gate của root repo. **Không ai chạy hộ** — chạy trước khi báo xong.
+- Trong `demoN/`: `npm run build` (và `npm run selftest` nếu có) — kiểm riêng demo vừa sửa.
+- `node linters/<rule>.mjs <file>` — chạy một luật trên một file.
+
+## Luật (hook cưỡng chế)
+- **Không** đọc/sửa `.env*`, key, credential. (PreToolUse **DENY**.)
+- **Không** sửa config lint/test/hook để dập lỗi. (PreToolUse **ASK** — chỉ xin khi chính người muốn đổi luật.)
+- **Không** hardcode secret hay log PII. (`linters/security.mjs`; PostToolUse báo ngay sau mỗi lần sửa.)
+- **Không** đẻ file mới khi đáng lẽ phải sửa file có sẵn.
+
 <!-- init-workflow:start -->
 ## Workflow Orchestration
 
