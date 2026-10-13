@@ -1,0 +1,36 @@
+# Unity: thư mục tự sinh lại được khi mở project / build
+/[Ll]ibrary/
+/[Tt]emp/
+/[Oo]bj/
+/[Bb]uild/
+/[Bb]uilds/
+/[Ll]ogs/
+/[Uu]ser[Ss]ettings/
+/[Mm]emoryCaptures/
+/[Rr]ecordings/
+
+# IDE / project file sinh tự động
+.vs/
+.vscode/
+.idea/
+*.csproj
+*.sln
+*.suo
+*.user
+*.pidb
+*.booproj
+*.svd
+*.pdb
+*.mdb
+*.opendb
+*.VC.db
+
+# scene tạm Unity Test Framework tạo khi chạy PlayMode test
+/Assets/InitTestScene*.unity
+/Assets/InitTestScene*.unity.meta
+
+# crash / build report
+sysinfo.txt
+crashlytics-build.properties
+*.apk
+*.aab
