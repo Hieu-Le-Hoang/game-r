@@ -4,20 +4,23 @@ Sandbox build cùng một vertical slice ARPG (hầm ngục -> sảnh -> boss) q
 
 ## Các demo
 
-| Demo | Tên game | Thể loại | Engine | Art | Trạng thái | Live |
+| Demo | Tên game | Thể loại | Engine | Asset | Trạng thái | URL |
 |---|---|---|---|---|---|---|
-| [demo1](demo1/) | Hầm Ngục Pixel | Roguelike top-down 2D | Phaser 3 (CDN, 1 file HTML) | Kenney Tiny Dungeon | Preview | [wcg-game-r-demo1.vercel.app](https://wcg-game-r-demo1.vercel.app/) |
-| [demo2](demo2/) | Hầm Mộ Vua Xương | ARPG 3D | Three.js | KayKit (CC0) | Xong | [wcg-game-r-demo2.vercel.app](https://wcg-game-r-demo2.vercel.app/) |
-| [demo3](demo3/) | Ngai Quỷ Vương | ARPG 3D, đổi art từ demo2 | Three.js | Quaternius (CC0) | Xong | [wcg-game-r-demo3.vercel.app](https://wcg-game-r-demo3.vercel.app/) |
-| [demo4](demo4/) | Ngai Quỷ Vương | Dark fantasy kiểu Diablo 4 | Three.js + N8AO | Poly Haven PBR + Quaternius (Mixamo dự kiến) | Phase A xong, Phase B chờ Mixamo | [wcg-game-r-demo4.vercel.app](https://wcg-game-r-demo4.vercel.app/) |
-| [demo5](demo5/) | Hầm Mộ Ardwen | ARPG isometric 2D | Phaser 4 (npm) | Flare (CC-BY-SA 3.0) | Xong | [wcg-game-r-demo5.vercel.app](https://wcg-game-r-demo5.vercel.app/) |
-| [demo6](demo6/) | Ngai Ma Nữ | Anime kiểu Genshin | Three.js + three-vrm | VRoid + Quaternius UAL | Đang làm | [wcg-game-r-demo6.vercel.app](https://wcg-game-r-demo6.vercel.app/) |
-| [demo7](demo7/) | Hầm Mộ Vua Xương (Unity) | ARPG 3D, port demo2 sang Unity | Unity 6.0 LTS (URP, export WebGL) + Unity MCP | KayKit (CC0) | Xong, chờ test tay | [wcg-game-r-demo7.vercel.app](https://wcg-game-r-demo7.vercel.app/) |
-| [demo8](demo8/) | Hầm Mộ Vua Xương (Godot) | ARPG 3D, port demo2 sang Godot | Godot 4.7.2 (export Web) + Godot MCP | KayKit (CC0) | Xong, chờ test tay | [wcg-game-r-demo8.vercel.app](https://wcg-game-r-demo8.vercel.app/) |
-| [demo9](demo9/) | Bụi Sa Mạc | FPS chiến thuật kiểu Counter-Strike 1.3, 5v5 với bot | Three.js + Rapier | Quaternius + Poly Haven (CC0) | Xong, chờ test tay | [wcg-game-r-demo9.vercel.app](https://wcg-game-r-demo9.vercel.app/) |
-| [demo11](demo11/) | Lục Địa MU | ARPG isometric 2D nhái MU Online: farm đông quái, ép đồ +9, Golden Invasion | Phaser 4 (npm) | Flare (CC-BY-SA 3.0) | Xong MVP, chờ test tay | [wcg-game-r-demo11.vercel.app](https://wcg-game-r-demo11.vercel.app/) |
+| [demo1](demo1/) | Hầm Ngục Pixel | Roguelike top-down 2D (pixel) | Phaser 3.90 (CDN, 1 file HTML) | Kenney Tiny Dungeon (CC0) | Preview | [wcg-game-r-demo1.vercel.app](https://wcg-game-r-demo1.vercel.app/) |
+| [demo2](demo2/) | Hầm Mộ Vua Xương | ARPG 3D top-down | Three.js 0.169 | KayKit (CC0) | Xong | [wcg-game-r-demo2.vercel.app](https://wcg-game-r-demo2.vercel.app/) |
+| [demo3](demo3/) | Ngai Quỷ Vương | ARPG 3D top-down, đổi art từ demo2 | Three.js 0.169 | Quaternius (CC0) | Xong | [wcg-game-r-demo3.vercel.app](https://wcg-game-r-demo3.vercel.app/) |
+| [demo4](demo4/) | Ngai Quỷ Vương | ARPG 3D dark fantasy kiểu Diablo 4 | Three.js 0.169 + N8AO | Poly Haven PBR + Quaternius (CC0), Mixamo dự kiến | Phase A xong, Phase B chờ Mixamo | [wcg-game-r-demo4.vercel.app](https://wcg-game-r-demo4.vercel.app/) |
+| [demo5](demo5/) | Hầm Mộ Ardwen | ARPG isometric 2D | Phaser 4.2.1 | Flare (CC-BY-SA 3.0) | Xong, chờ test tay | [wcg-game-r-demo5.vercel.app](https://wcg-game-r-demo5.vercel.app/) |
+| [demo6](demo6/) | Ngai Ma Nữ | ARPG 3D anime kiểu Genshin | Three.js 0.169 + three-vrm | VRoid + Quaternius UAL | Đang làm | [wcg-game-r-demo6.vercel.app](https://wcg-game-r-demo6.vercel.app/) |
+| [demo7](demo7/) | Hầm Mộ Vua Xương (Unity) | ARPG 3D top-down, port demo2 | Unity 6.0 LTS (URP, WebGL) + Unity MCP | KayKit (CC0) | Đã sửa lỗi đen màn hình, chờ test lại | [wcg-game-r-demo7.vercel.app](https://wcg-game-r-demo7.vercel.app/) |
+| [demo8](demo8/) | Hầm Mộ Vua Xương (Godot) | ARPG 3D top-down, port demo2 | Godot 4.7.2 (Compatibility, Web) + Godot MCP | KayKit (CC0) | Xong, chờ test tay | [wcg-game-r-demo8.vercel.app](https://wcg-game-r-demo8.vercel.app/) |
+| [demo9](demo9/) | Bụi Sa Mạc | FPS chiến thuật kiểu CS 1.3, 5v5 với bot | Three.js 0.169 + Rapier 0.21 | Quaternius + Poly Haven (CC0) | Xong, chờ test tay | [wcg-game-r-demo9.vercel.app](https://wcg-game-r-demo9.vercel.app/) |
+| [demo10](demo10/) | Võ Lâm Truyền Kỳ 1 | MMORPG 2D offline clone VLTK1: 5 phái, auto train, cấp 1-60 | Phaser 4.2.1 | Flare (CC-BY-SA 3.0) | Xong, chờ test tay | [wcg-game-r-demo10.vercel.app](https://wcg-game-r-demo10.vercel.app/) |
+| [demo11](demo11/) | Lục Địa MU | ARPG isometric 2D nhái MU Online: farm đông quái, ép đồ +9 | Phaser 4.2.1 | Flare (CC-BY-SA 3.0) | Xong MVP, chờ test tay | [wcg-game-r-demo11.vercel.app](https://wcg-game-r-demo11.vercel.app/) |
 
-Deploy: Vercel team `wecare2`, project `wcg-game-r-demoN`. demo2–6, demo9 và demo11 chạy `vercel deploy --prod` trong folder demo (Vercel tự build Vite). demo1 deploy riêng: bọc `demo1/preview/index.html` vào skeleton HTML rồi deploy như static. demo8 export Web bằng Godot headless rồi deploy folder `export/web` như static. demo7 build WebGL bằng Unity batchmode rồi deploy folder `Builds/WebGL` như static.
+Gom theo nhóm: **3D** = demo2, 3, 4, 6, 7, 8, 9 · **2D** = demo1, 5, 10, 11 · **engine** = Three.js (5 demo), Phaser (4 demo), Unity (1), Godot (1) · **asset** = KayKit (demo2, 7, 8), Quaternius (demo3, 4, 6, 9), Flare (demo5, 10, 11), Kenney (demo1).
+
+Deploy: Vercel team `wecare2`, project `wcg-game-r-demoN`. demo2–6, demo9, demo10 và demo11 chạy `vercel deploy --prod` trong folder demo (Vercel tự build Vite). demo1 deploy riêng: bọc `demo1/preview/index.html` vào skeleton HTML rồi deploy như static. demo8 export Web bằng Godot headless rồi deploy folder `export/web` như static. demo7 build WebGL bằng Unity batchmode rồi deploy folder `Builds/WebGL` như static.
 
 ```mermaid
 flowchart LR
@@ -72,6 +75,10 @@ Version lấy theo `package.json` (demo1: link CDN). Chi tiết nguồn art và 
 - **Engine:** Three.js 0.169.0 + Rapier 0.21 (character controller, raycast đạn, lựu đạn nảy) · Vite 5.4.10. Logic game (`src/sim`) tách khỏi render nên selftest 10 bot đánh nhau chạy được trên Node. Có thêm smoke test client bằng jsdom + renderer giả, và tool chụp góc nhìn FPS bằng rasterizer CPU (không cần browser).
 - **Art:** Quaternius Ultimate Animated Character (SWAT cho CT, Adventurer cho T) + Ultimate Gun Pack (CC0). Texture sa thạch / cát của Poly Haven (CC0). Âm thanh lấy từ Kenney + OpenGameArt; tiếng súng của Vincent Sevedge theo CC-BY 3.0.
 
+### demo10 — Võ Lâm Truyền Kỳ 1 (clone 2D offline)
+- **Engine:** Phaser 4.2.1 · Vite 5.4.10. Logic thuần JS (`src/core/`, không import Phaser) tách khỏi render, nên selftest chạy bằng Node giả lập auto train 1 -> 60 cho cả 5 phái. Chi tiết: [demo10/README.md](demo10/README.md), spec ở [demo10/gameplay.md](demo10/gameplay.md).
+- **Art:** chỉ dùng Flare (CC-BY-SA 3.0): map Flare đổi thành Ba Lăng huyện / Tương Dương / 4 bãi luyện công, paper-doll 5 phái, hiệu ứng power làm skill.
+
 ### demo11 — Lục Địa MU (nhái MU Online)
 - **Câu hỏi A/B:** Phaser 4 có giữ 60fps với cảnh kiểu MU không (150+ quái, skill AoE, đồ +7..+9 phát sáng, Golden Invasion)? So với demo5. Đo bằng HUD FPS góc phải, `?bench=N&auto` (N quái quanh hero, tự xả skill, đo 20 giây rồi in kết quả) và `?nofx` (tắt bloom/glow).
 - **Engine:** Phaser 4.2.1 · Vite 5.4.10. Nền map vẽ bằng 1 `Blitter` chia chunk, ẩn chunk ngoài camera. Quái dùng chung 1 flow field (BFS từ hero) thay cho A* từng con, tìm hàng xóm bằng spatial hash, quái ngoài màn hình không vẽ và AI nghĩ thưa hơn. Số damage dùng `BitmapText` (RetroFont) có pool. Đồ +7..+9 phát sáng bằng Glow filter đặt trên từng layer paperdoll.
@@ -83,7 +90,7 @@ Repo ưu tiên engine **web-native**: viết bằng JS/TS, browser chạy thẳn
 
 | Engine | Loại | Vị thế 2026 | Repo |
 |---|---|---|---|
-| **Phaser 4** | Framework 2D | Mặc định cho 2D web. v4.0 "Caladan" ra 10/4/2026 với renderer WebGL viết lại, filters, lighting; bản mới nhất 4.2.1 (7/2026) | demo5, demo11 (4.2.1); demo1 vẫn ở 3.90 |
+| **Phaser 4** | Framework 2D | Mặc định cho 2D web. v4.0 "Caladan" ra 10/4/2026 với renderer WebGL viết lại, filters, lighting; bản mới nhất 4.2.1 (7/2026) | demo5, demo10, demo11 (4.2.1); demo1 vẫn ở 3.90 |
 | **PixiJS v8** | Renderer 2D | Renderer 2D nhanh nhất, ưu tiên WebGPU, nhưng không phải game framework | Chưa dùng |
 | **Three.js** | Library 3D | Phổ biến nhất cho 3D web, AI tool hiểu rõ nhất. Có WebGPURenderer + TSL | demo2/3/4/6/9 |
 | **Babylon.js** | Engine 3D trọn bộ | Có sẵn physics (Havok), GUI, inspector, WebXR. Game tiêu biểu: Shell Shockers | Chưa dùng |
@@ -98,7 +105,7 @@ Xu hướng: các engine đang chuyển dần sang **WebGPU**, cho phép dùng c
 Yêu cầu: Node.js 18+.
 
 ```bash
-cd demo3          # hoặc demo2, demo4, demo5, demo6, demo9, demo11
+cd demo3          # hoặc demo2, demo4, demo5, demo6, demo9, demo10, demo11
 npm install
 npm run dev       # Vite dev server (--host, mở được từ điện thoại cùng mạng LAN)
 npm run build     # build ra dist/
@@ -152,6 +159,7 @@ game-r/
 ├── demo7/             # project Unity: Assets/Scripts (C#), Assets/Editor (setup/build), Assets/Tests, tools/unity.ps1
 ├── demo8/             # project Godot: project.godot, scenes/, scripts/, assets/, tools/
 ├── demo9/             # FPS Three.js + Rapier: src/sim (logic, chạy được trên Node), src/ (render), tools/ (selftest, render CPU)
+├── demo10/            # VLTK1 Phaser 4: src/core (logic thuần JS, chạy được trên Node), src/render, src/ui (DOM), tools/ (build asset, selftest)
 ├── demo11/            # MU Online Phaser 4: src/ (data, items, state, grid chạy được trên Node; game.js scene; ui.js DOM), tools/ (build asset, selftest, smoke headless)
 ├── docs/
 │   ├── research-ai-game.md   # research xu hướng làm game bằng AI 2026
@@ -168,7 +176,7 @@ game-r/
 Mỗi demo có `CREDITS.md` ghi nguồn, tác giả, license; file license gốc nằm trong `public/` của demo đó.
 
 - **CC0**: KayKit, Quaternius, Kenney, Poly Haven — free cả thương mại, không bắt buộc ghi công.
-- **CC-BY-SA 3.0**: Flare (demo5, demo11) — phải ghi công và phát hành bản sửa đổi cùng license.
+- **CC-BY-SA 3.0**: Flare (demo5, demo10, demo11) — phải ghi công và phát hành bản sửa đổi cùng license.
 - **VRoid sample** (demo6): license nhúng trong metadata từng file `.vrm`, xem `demo6/CREDITS.md`.
 - **Mixamo** (demo4 phase B): license cấm phát tán file gốc -> chỉ để trong `_inbox/`, không commit.
 - **CC-BY 3.0**: tiếng súng Vincent Sevedge (demo9) — phải ghi công.
