@@ -6,6 +6,7 @@
 ## Đang làm
 - [ ] demo7 (Hầm Mộ Vua Xương): đã sửa đen màn hình bản WebGL, chờ anh test lại https://wcg-game-r-demo7.vercel.app
 - [ ] demo11 (Lục Địa MU): xong MVP, chờ anh test tay.
+- [ ] demo12 (Đảo Pet Tiếng Anh, game học tiếng Anh lớp 3): plan đã duyệt 2026-10-14 ở `demo12/PLAN.md`, chưa build. Session sau: build MVP theo checklist trong `tasks/todo.md`.
 
 ## Tiếp theo
 - [ ] demo8, demo9: chờ test tay · demo4 Phase B: chờ Mixamo · demo6: đang làm.
