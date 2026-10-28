@@ -1,0 +1,24 @@
+{
+  "name": "game-r-demo19",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "build": "tsc --noEmit && tsx tools/build.ts",
+    "build:fast": "tsx tools/build.ts --fast",
+    "smoke": "tsx tools/build.ts --box --fast",
+    "install-map": "tsx tools/hostage.ts --install && tsx tools/build.ts --install",
+    "selftest": "tsx tools/selftest.ts",
+    "hostage": "tsx tools/hostage.ts",
+    "dep": "tsx tools/dep.ts",
+    "pack": "tsx tools/pack.ts",
+    "packtest": "tsx tools/packtest.ts"
+  },
+  "devDependencies": {
+    "@types/node": "22.9.0",
+    "esbuild": "0.24.0",
+    "sharp": "0.35.5",
+    "tsx": "4.19.2",
+    "typescript": "5.6.3"
+  }
+}

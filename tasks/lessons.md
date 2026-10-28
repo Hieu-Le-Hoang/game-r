@@ -43,3 +43,12 @@
 - Sai: đổi map bằng `scene.restart({ map })`, cờ `this.leaving` của lần qua cổng trước vẫn còn, nên chết trong Dungeon thì lệnh về Lorencia bị bỏ qua và hero kẹt mãi ở trạng thái chết. `create()` chỉ gán lại field nào nó đụng tới.
 - Rule: field nào của scene sống qua một lần map (`leaving`, `boss`, `dark`, `bench`, `fx`, `hover`...) thì reset hết trong `init()`. Keyboard và listener input thì Phaser 4 tự dọn khi shutdown (`removeAllKeys(true)`), không cần lo.
 - Kiểm đường thẳng cho nhân vật có thân: `lineFree` chỉ xét đường tâm, nên nhân vật đi sượt góc tường là kẹt (đứng chạy tại chỗ). Dùng 3 đường song song cách nhau bằng bán kính thân (`lineFreeR`), và khi trượt không nhích được nữa thì tìm lại đường / chuyển sang flow field.
+
+## 2026-10-28 · Đọc ngược góp ý "bé ngang ra" (demo19 cs_wecare)
+- Sai: anh gõ không dấu "cho be ngang ra xiu" (= bè ngang ra, nới rộng), em đọc thành "bé" (nhỏ lại) và thu 2 cánh cửa kho từ 128 xuống 96. Anh phải nhắc lại "chưa điều chỉnh cho rộng ra".
+- Rule: góp ý không dấu mà một từ đọc được 2 nghĩa ngược nhau (be/bè/bé, to/tò, cao/cạo...) thì dựa vào từ đi kèm: "... ra" (ngang ra, rộng ra, dài ra) là nới thêm; "... lại" (nhỏ lại, thấp lại) là thu bớt. Vẫn không chắc thì ghi rõ cách hiểu ("em hiểu là nới rộng") trong bảng góp ý trước khi sửa.
+- Tương tự với "rộng / dài / cao" của một vật: anh nói theo **góc nhìn trong ảnh chụp màn hình**, không theo trục của model. Xe nâng nhìn ngang hông mà anh bảo "rộng ra" thì là chiều đầu - đuôi (em đã nới nhầm bề ngang, anh phải nhắc "chưa sửa cho dài ra"). Đọc hướng camera trong ảnh trước khi chọn trục.
+
+## 2026-10-28 · Build vẫn cài bản lỗi vì grep nằm giữa chuỗi && (demo19 cs_wecare)
+- Sai: chạy `selftest | grep FAIL... && build --install`. Selftest FAIL (bot không vào được phòng họp), nhưng grep khớp dòng FAIL nên trả mã 0, build vẫn chạy và cài bản lỗi vào game.
+- Rule: lấy mã thoát của chính selftest (`selftest > log; r=$?; [ $r -eq 0 ] && build`), không để grep nằm giữa chuỗi `&&` trước một bước ghi/cài đặt.
